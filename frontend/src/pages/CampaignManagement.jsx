@@ -1,0 +1,92 @@
+// src/pages/CampaignManagement.jsx
+import React, { useState, useEffect } from 'react';
+import LeftPanel from '../components/LeftPanel';
+import RightPanel from '../components/RightPanel';
+import TopBar from '../components/TopBar';
+
+import axios from 'axios';
+
+const CampaignManagement = () => {
+  const [banners, setBanners] = useState([])
+  const [selectedProduct, setSelectedProduct] = useState(null);
+
+  const refetchBanners = () => {
+    axios.get('http://localhost:5000/banners')
+      .then(response => {
+        setBanners(response.data);
+      })
+      .catch(error => {
+        console.error('Error fetching banners:', error);
+      });
+  };
+
+  useEffect(() => {
+    refetchBanners(); // Initial fetch when the component mounts
+  }, []);
+
+  const handleCreateBanner = (newBanner, imageFile) => {
+    const formData = new FormData();
+    formData.append('name', newBanner.name);
+    formData.append('type', newBanner.type);
+    formData.append('isDefault', newBanner.isDefault);
+    formData.append('status', newBanner.status);
+    if (imageFile) formData.append('photo', imageFile); // Append only if imageFile exists
+    if (newBanner.startDate) formData.append('startDate', newBanner.startDate); // Append only if startDate exists
+    if (newBanner.endDate) formData.append('endDate', newBanner.endDate); // Append only if endDate exists
+
+    axios.post('http://localhost:5000/banners', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
+    })
+      .then(() => {
+        refetchBanners(); // Re-fetch banners after creation
+      })
+      .catch(error => {
+        console.error('Error creating banner:', error);
+      });
+  };
+
+  const handleDeleteBanner = (bannerId) => {
+    axios.delete(`http://localhost:5000/banners/${bannerId}`)
+      .then(() => {
+        // Update the state to remove the deleted banner
+        setBanners(prevBanners => prevBanners.filter(banner => banner._id !== bannerId));
+        // Clear the selected product if it was the deleted banner
+        if (selectedProduct && selectedProduct._id === bannerId) {
+          setSelectedProduct(null);
+        }
+      })
+      .catch(error => {
+        console.error('Error deleting banner:', error);
+      });
+  };
+
+
+  const handleDuplicateItem = (duplicatedItem) => {
+    setBanners(prevBanners => [...prevBanners, duplicatedItem]);
+  };
+
+  return (
+    <div className="flex flex-col h-screen">
+      <TopBar title="Campaigns" />
+      <div className="flex flex-1 overflow-hidden">
+        <LeftPanel
+          onProductSelect={setSelectedProduct}
+          products={banners}
+          onCreateBanner={handleCreateBanner}
+        />
+        {selectedProduct && (
+          <RightPanel
+            selectedProduct={selectedProduct}
+            handleDeleteBanner={handleDeleteBanner}
+            banners={banners}
+            onDuplicate={handleDuplicateItem}
+          />
+        )}
+      </div>
+    </div>
+  );
+};
+
+export default CampaignManagement;
