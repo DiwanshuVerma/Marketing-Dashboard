@@ -13,7 +13,7 @@ function CategoryList() {
 
   const fetchCategories = async () => {
     try {
-      const res = await axios.get("http://localhost:5000/api/categories");
+      const res = await axios.get("https://marketing-dashboard-8274.onrender.com/categories");
       setCategories(res.data);
     } catch (err) {
       console.error(err);
@@ -22,7 +22,7 @@ function CategoryList() {
 
   const handleSaveCategory = async (name) => {
     try {
-      await axios.post("http://localhost:5000/api/categories", {
+      await axios.post("https://marketing-dashboard-8274.onrender.com/categories", {
         categoryName: name,
       });
       fetchCategories();
