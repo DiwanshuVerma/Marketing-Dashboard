@@ -41,11 +41,11 @@ const campaigns = [
 const CreateCampaignModal = ({ onClose, onCreate }) => {
   const [name, setName] = useState("");
   const [type, setType] = useState("Restaurent Discount");
-  const [status, setStatus] = useState("Upcoming");
+  const [status, setStatus] = useState("Inactive");
 
   const handleCreate = async () => {
     const newBanner = {
-      name,
+      title: name,
       type,
       status,
       isDefault: true
@@ -190,7 +190,7 @@ const LeftPanel = ({ onProductSelect, products = [], onCreateBanner }) => {
                                     : "text-yellow-500"
                               }
                             />
-                            <span>{banner.name}</span>
+                            <span>{banner.title}</span>
                           </div>
                           <span className={banner.status === "Active"
                             ? "text-green-500 text-sm"
@@ -217,7 +217,7 @@ const LeftPanel = ({ onProductSelect, products = [], onCreateBanner }) => {
                                 : "text-yellow-500"
                           }
                         />
-                        <span>{banner.name}</span>
+                        <span>{banner.title}</span>
                       </div>
                       <span className={banner.status === "Active"
                         ? "text-green-500 text-sm"

@@ -13,7 +13,7 @@ const initialTemplates = [
   { id: 1, title: 'Forgot Password', emailSubject: 'wowwo', status: 'Active', emailBody: 'Hii Golu, ' },
   { id: 2, title: 'Order Receive Alert', status: 'Active', emailBody: 'Hii Diwansoo, ' },
   { id: 3, title: 'Promotional Email', status: 'Inactive', emailBody: 'Hii Diwanshu, ' },
-  { id: 4, title: 'User Added', status: 'Active', emailBody: 'Hii aman, ' },
+  { id: 4, title: 'User Added', status: 'Active', emailBody: 'Hii user, ' },
   { id: 5, title: 'Order Placed', status: 'Active', emailBody: 'Hii anish, ' },
   { id: 6, title: 'Welcome new User', status: 'Inactive', emailBody: 'Hii ishu, ' },
   { id: 7, title: 'Order Cancelled', status: 'Active', emailBody: 'Hii aman, ' },
@@ -96,7 +96,7 @@ const EmailTemplateManagement = () => {
       <TopBar title='Email Templates' placeholder='Search templates' />
       <div className="flex flex-1 overflow-hidden">
         <LeftPanel setSelectedTemplate={setSelectedTemplate}
-          setHandleTemplate={setHandleTemplate} templates={templates} />
+          setHandleTemplate={setHandleTemplate} templates={templates} heading={'Templates'} />
 
         {selectedTemplate ? (
           <RightPanel
@@ -115,171 +115,3 @@ const EmailTemplateManagement = () => {
   )
 }
 export default EmailTemplateManagement;
-
-
-
-
-// const EmailTemplateManagement = () => {
-//   const initialTemplates = [
-//     { id: 1, title: 'Forgot Password', status: 'Active' },
-//     { id: 2, title: 'Order Receive Alert', status: 'Active' },
-//     { id: 3, title: 'Promotional Email', status: 'Inactive' },
-//     { id: 4, title: 'User Added', status: 'Active' },
-//   ];
-
-//   const [templates, setTemplates] = useState(initialTemplates);
-//   const [searchTerm, setSearchTerm] = useState('');
-//   const [newTemplate, setNewTemplate] = useState('');
-//   const navigate = useNavigate()
-
-//   const handleAddTemplate = () => {
-//     if (newTemplate.trim() === '') {
-//       alert('Template title cannot be empty');
-//       return;
-//     }
-//     const newId = templates.length ? templates[templates.length - 1].id + 1 : 1;
-//     const newTemplateObj = { id: newId, title: newTemplate, status: 'Active' };
-//     setTemplates([...templates, newTemplateObj]);
-//     setNewTemplate('');
-//   };
-
-//   const handleUpdateTemplate = (id) => {
-
-//     navigate('/email-tempalate-edit')
-//   };
-
-//   const handleDeleteTemplate = (id) => {
-//     if (window.confirm('Are you sure you want to delete this template?')) {
-//       setTemplates((prev) => prev.filter((template) => template.id !== id));
-//     }
-//   };
-
-//   const toggleStatus = (id) => {
-//     setTemplates((prev) =>
-//       prev.map((template) =>
-//         template.id === id
-//           ? { ...template, status: template.status === 'Active' ? 'Inactive' : 'Active' }
-//           : template
-//       )
-//     );
-//   };
-
-//   const columns = [
-//     {
-//       name: 'Sr. No.',
-//       selector: (row, index) => index + 1,
-//       width: '10%',
-//       sortable: false,
-//       cell: (row, index) => <div className="text-left">{index + 1}</div>,
-//     },
-//     {
-//       name: 'Title (En)',
-//       selector: (row) => row.title,
-//       width: '40%',
-//       sortable: true,
-//       cell: (row) => <div className="text-left">{row.title}</div>,
-//     },
-//     {
-//       name: 'Status',
-//       selector: (row) => row.status,
-//       width: '20%',
-//       sortable: true,
-//       center: true,
-//       cell: (row) => (
-//         <div
-//           className={`${
-//             row.status === 'Active' ? 'text-green-500' : 'text-red-500'
-//           } font-medium`}
-//         >
-//           {row.status}
-//         </div>
-//       ),
-//     },
-//     {
-//       name: 'Actions',
-//       width: '30%',
-//       sortable: false,
-//       right: true,
-//       cell: (row) => (
-//         <div className="flex justify-end items-center gap-2">
-//           <button
-//             className="p-2 text-white bg-blue-500 rounded hover:bg-blue-600"
-//             onClick={() => handleUpdateTemplate(row.id)}
-//           >
-//             <FaEdit />
-//           </button>
-//           <button
-//             className="p-2 text-white bg-red-500 rounded hover:bg-red-600"
-//             onClick={() => handleDeleteTemplate(row.id)}
-//           >
-//             <FaTrashAlt />
-//           </button>
-//           <button
-//             className={`p-2 rounded ${
-//               row.status === 'Active' ? 'bg-green-500 text-white' : 'bg-gray-500 text-white'
-//             }`}
-//             onClick={() => toggleStatus(row.id)}
-//           >
-//             {row.status === 'Active' ? <FaToggleOn /> : <FaToggleOff />}
-//           </button>
-//         </div>
-//       ),
-//     },
-//   ];
-
-//   const filteredTemplates = templates.filter((template) =>
-//     template.title.toLowerCase().includes(searchTerm.toLowerCase())
-//   );
-
-//   return (
-//     <div className="p-6">
-//       <h1 className="text-2xl font-bold mb-4">Email Template Management</h1>
-
-//       <div className="flex gap-2 mb-4">
-//         <input
-//           type="text"
-//           placeholder="New Template Title"
-//           className="px-2 py-1 border rounded"
-//           value={newTemplate}
-//           onChange={(e) => setNewTemplate(e.target.value)}
-//         />
-//         <button
-//           onClick={handleAddTemplate}
-//           className="px-4 py-2 text-white bg-green-500 rounded hover:bg-green-600"
-//         >
-//           Add Template
-//         </button>
-//       </div>
-
-//       <div className="flex justify-between items-center mb-4">
-//         <div className="flex items-center gap-2">
-//           <input
-//             type="text"
-//             placeholder="Search templates..."
-//             className="px-2 py-1 border rounded"
-//             value={searchTerm}
-//             onChange={(e) => setSearchTerm(e.target.value)}
-//           />
-//           <button className="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300">
-//             <FaSearch />
-//           </button>
-//         </div>
-//         <button
-//           className="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300"
-//           onClick={() => window.location.reload()}
-//         >
-//           <FaSyncAlt />
-//         </button>
-//       </div>
-
-//       <DataTable
-//         columns={[...columns]}
-//         data={filteredTemplates}
-//         pagination
-//         highlightOnHover
-//         striped
-//       />
-//     </div>
-//   );
-// };
-

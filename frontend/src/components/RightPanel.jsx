@@ -77,7 +77,7 @@ const RightPanel = ({ selectedProduct,handleUpdateBanner, handleDeleteBanner, on
     <div className="w-2/3 p-6 bg-white shadow-md border-l border-gray-200 overflow-y-auto">
       {/* Header */}
       <HeaderComponent
-        title={data.name || "Untitled"}
+        title={data.title || "Untitled"}
         isEditMode={isEditMode}
         onEdit={() => setIsEditMode(true)}
         onCancel={handleCancel}

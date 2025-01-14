@@ -10,24 +10,24 @@ import RightPanel from '../components/EmailTemplates/RightPanel';
 
 
 const initialTemplates = [
-  { id: 1, title: 'Forgot Password', emailSubject: 'wowwo', status: 'Active', emailBody: 'Hii Golu, Quote of the day: ' },
-  { id: 2, title: 'Order Receive Alert', status: 'Active', emailBody: 'Hii Diwansoo, Quote of the day: ' },
-  { id: 3, title: 'Promotional Email', status: 'Inactive', emailBody: 'Hii Diwanshu, Quote of the day: ' },
-  { id: 4, title: 'User Added', status: 'Active', emailBody: 'Hii aman, Quote of the day: ' }
+  { id: 1, title: 'Terms of Use', emailSubject: 'wowwo', status: 'Active', emailBody: 'Hii Golu, ' },
+  { id: 2, title: 'Privacy Policy', status: 'Active', emailBody: 'Hii Diwansoo, ' },
+  { id: 3, title: 'Contact Us', status: 'Inactive', emailBody: 'Hii Diwanshu, ' },
+  { id: 4, title: 'About Us', status: 'Active', emailBody: 'Hii aman, ' }
 ]
 
 
 const TaxesAndCharges = () => {
-  const localStorageTemplates = JSON.parse(localStorage.getItem('templates')) || initialTemplates
+  // const localStorageTemplates = JSON.parse(localStorage.getItem('templates')) || initialTemplates
 
-  const [templates, setTemplates] = useState(localStorageTemplates)
+  const [templates, setTemplates] = useState(initialTemplates)
   const [selectedTemplate, setSelectedTemplate] = useState(null); // To store selected template data
   const [selectedTemplateDefault, setSelectedTemplateDefault] = useState({ title: '', emailBody: '' })
   const [handleTemplate, setHandleTemplate] = useState(true)
 
-  useEffect(() => {
-    localStorage.setItem('templates', JSON.stringify(templates));
-  }, [templates])
+  // useEffect(() => {
+  //   localStorage.setItem('templates', JSON.stringify(templates));
+  // }, [templates])
 
 
   const handleUpdateTemplate = (templateId, updatedFields) => {
@@ -89,10 +89,10 @@ const TaxesAndCharges = () => {
 
   return (
     <div className="flex flex-col h-screen">
-      <TopBar title='Email Templates' placeholder='Search templates' />
+      <TopBar title='Content Management System' placeholder='Search Content' />
       <div className="flex flex-1 overflow-hidden">
         <LeftPanel setSelectedTemplate={setSelectedTemplate}
-          setHandleTemplate={setHandleTemplate} templates={templates} />
+          setHandleTemplate={setHandleTemplate} templates={templates} heading={'Contents'}/>
 
         {selectedTemplate ? (
           <RightPanel

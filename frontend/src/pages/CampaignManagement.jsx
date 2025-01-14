@@ -26,7 +26,7 @@ const CampaignManagement = () => {
 
   const handleCreateBanner = (newBanner, imageFile) => {
     const formData = new FormData();
-    formData.append('name', newBanner.name);
+    formData.append('title', newBanner.title);
     formData.append('type', newBanner.type);
     formData.append('isDefault', newBanner.isDefault);
     formData.append('status', newBanner.status);

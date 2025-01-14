@@ -23,7 +23,7 @@ export default function App() {
         <Route path="/email-templates" element={<EmailTemplates />} />
         <Route path='/email-tempalate-edit' element={<EmailTempalateEdit />} />
 
-        <Route path="/taxes-charges" element={<TaxesAndCharges />} />
+        <Route path="/CMS" element={<TaxesAndCharges />} />
         <Route path="/offers" element={<Offers />} />
         <Route path="/outlet-settings" element={<OutletSettings />} />
         <Route path="/outlet-info" element={<OutletInfo />} />

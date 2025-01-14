@@ -11,7 +11,7 @@ import {
 } from "react-icons/hi";
 import { MdOutlineDining, MdCampaign } from "react-icons/md";
 import { IoShareSocial } from "react-icons/io5";
-import { FaHandshake } from "react-icons/fa";
+import { FaHandshake, FaBookOpen } from "react-icons/fa";
 
 
 import { outletData } from "../data/dummy"; // Update the path as necessary  // Import dummy data
@@ -107,9 +107,9 @@ export default function Sidebar() {
           <li>{navItem("/email-templates", IoShareSocial, "Email Templates")}</li>
           <li>
             {navItem(
-              "/taxes-charges",
-              FaHandshake,
-              "Influencer Collaborations"
+              "/CMS",
+              FaBookOpen,
+              "CMS"
             )}
           </li>
           <li>{navItem("/offers", HiOutlineGift, "Offers")}</li>

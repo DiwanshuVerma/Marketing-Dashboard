@@ -21,8 +21,7 @@ const HeaderComponent = ({
     const newValue = e.target.value;
     setEditableTitle(newValue);
     if (onChange) {
-      onChange('title', newValue);
-      console.log('new val is:', newValue)
+      onChange('title', newValue)
     }
   };
 

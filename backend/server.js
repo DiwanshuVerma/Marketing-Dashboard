@@ -31,7 +31,7 @@ mongoose
 
 // Banner schema and model
 const bannerSchema = new mongoose.Schema({
-  name: { type: String, required: true },
+  title: { type: String, required: true },
   type: { type: String, required: true },
   isDefault: { type: Boolean, default: false },
   status: { type: String, enum: ['Active', 'Upcoming', 'Inactive'], default: 'Inactive' },
@@ -59,11 +59,11 @@ app.get('/banners', async (req, res) => {
 // Create a new banner (with image upload)
 app.post('/banners', upload.single('photo'), async (req, res) => {
   try {
-    const { name, type, isDefault, status, startDate, endDate } = req.body;
+    const { title, type, isDefault, status, startDate, endDate } = req.body;
     const photoPath = req.file ? `/uploads/${req.file.filename}` : null; // Store relative path
 
     const banner = new Banner({
-      name,
+      title,
       type,
       isDefault,
       status,
@@ -85,7 +85,7 @@ app.post('/banners', upload.single('photo'), async (req, res) => {
 // Update a banner (with image upload)
 app.put('/banners/:id', upload.single('photo'), async (req, res) => {
   try {
-    const { name, type, isDefault, status, startDate, endDate } = req.body;
+    const { title, type, isDefault, status, startDate, endDate } = req.body;
     const banner = await Banner.findById(req.params.id);
 
     if (!banner) {
@@ -100,7 +100,7 @@ app.put('/banners/:id', upload.single('photo'), async (req, res) => {
       banner.photo = `/uploads/${req.file.filename}`;
     }
 
-    banner.name = name || banner.name;
+    banner.title = title || banner.title;
     banner.type = type || banner.type;
     banner.isDefault = isDefault || banner.isDefault;
     banner.status = status || banner.status;
