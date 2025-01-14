@@ -38,7 +38,7 @@ export default function TopNav() {
         <HiOutlineSearch size={20} className="absolute top-2 left-2" />
         <input
           type="text"
-          placeholder="Search campaigns, types"
+          placeholder="Search here"
           className="pl-10 pr-3 py-2 w-full rounded border border-gray-300 focus:outline-none focus:border-blue-300"
         />
       </div>

@@ -63,13 +63,49 @@ const CampaignManagement = () => {
   };
 
 
+const handleUpdateBanner = (bannerId, updatedFields) => {
+  const formData = new FormData();
+  
+  // Append all updated fields to formData
+  Object.keys(updatedFields).forEach(key => {
+    // Special handling for photo since it's a file
+    if (key === 'photo' && updatedFields[key] instanceof File) {
+      formData.append('photo', updatedFields[key]);
+    } else {
+      formData.append(key, updatedFields[key]);
+    }
+  });
+
+  axios.put(`http://localhost:5000/banners/${bannerId}`, formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data'
+    }
+  })
+    .then(response => {
+      // Update local state
+      setBanners(prevBanners => 
+        prevBanners.map(banner => 
+          banner._id === bannerId ? { ...banner, ...updatedFields } : banner
+        )
+      )
+      // Update selected product if it's the one being edited
+      if (selectedProduct && selectedProduct._id === bannerId) {
+        setSelectedProduct(prev => ({ ...prev, ...updatedFields }));
+      }
+    })
+    .catch(error => {
+      console.error('Error updating banner:', error);
+    });
+};
+
+
   const handleDuplicateItem = (duplicatedItem) => {
-    setBanners(prevBanners => [...prevBanners, duplicatedItem]);
-  };
+    setBanners(prevBanners => [...prevBanners, duplicatedItem])
+  }
 
   return (
     <div className="flex flex-col h-screen">
-      <TopBar title="Campaigns" />
+      <TopBar title="Campaigns" placeholder="Search campaigns, types"/>
       <div className="flex flex-1 overflow-hidden">
         <LeftPanel
           onProductSelect={setSelectedProduct}
@@ -82,11 +118,12 @@ const CampaignManagement = () => {
             handleDeleteBanner={handleDeleteBanner}
             banners={banners}
             onDuplicate={handleDuplicateItem}
+            handleUpdateBanner={handleUpdateBanner}
           />
         )}
       </div>
     </div>
-  );
-};
+  )
+}
 
 export default CampaignManagement;

@@ -38,7 +38,7 @@ const bannerSchema = new mongoose.Schema({
   photo: { type: String },
   startDate: { type: Date, required: false }, // Required only when provided
   endDate: { type: Date, required: false }    // Same as above
-});
+})
 
 
 const Banner = mongoose.model('Banner', bannerSchema);

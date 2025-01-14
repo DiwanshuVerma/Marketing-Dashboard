@@ -1,139 +1,281 @@
-import React, { useState } from "react";
-import { Transition } from "@headlessui/react"; // Optional if you want smoother collapses
+import React, { useEffect, useState } from 'react';
+import DataTable from 'react-data-table-component';
+import { useNavigate } from 'react-router-dom'
 
-export default function TaxesAndCharges() {
-  const [gstRate, setGstRate] = useState(5);
-  const [serviceCharge, setServiceCharge] = useState(0);
-  const [showGSTCard, setShowGSTCard] = useState(true);
-  const [showServiceCard, setShowServiceCard] = useState(true);
+import { FaSearch, FaSyncAlt, FaEdit, FaTrashAlt, FaToggleOn, FaToggleOff } from 'react-icons/fa';
+import TopBar from '../components/TopBar';
+import LeftPanel from '../components/EmailTemplates/LeftPanel';
+import RightPanel from '../components/EmailTemplates/RightPanel';
+
+
+
+const initialTemplates = [
+  { id: 1, title: 'Forgot Password', emailSubject: 'wowwo', status: 'Active', emailBody: 'Hii Golu, Quote of the day: ' },
+  { id: 2, title: 'Order Receive Alert', status: 'Active', emailBody: 'Hii Diwansoo, Quote of the day: ' },
+  { id: 3, title: 'Promotional Email', status: 'Inactive', emailBody: 'Hii Diwanshu, Quote of the day: ' },
+  { id: 4, title: 'User Added', status: 'Active', emailBody: 'Hii aman, Quote of the day: ' }
+]
+
+
+const TaxesAndCharges = () => {
+  const localStorageTemplates = JSON.parse(localStorage.getItem('templates')) || initialTemplates
+
+  const [templates, setTemplates] = useState(localStorageTemplates)
+  const [selectedTemplate, setSelectedTemplate] = useState(null); // To store selected template data
+  const [selectedTemplateDefault, setSelectedTemplateDefault] = useState({ title: '', emailBody: '' })
+  const [handleTemplate, setHandleTemplate] = useState(true)
+
+  useEffect(() => {
+    localStorage.setItem('templates', JSON.stringify(templates));
+  }, [templates])
+
+
+  const handleUpdateTemplate = (templateId, updatedFields) => {
+
+    setTemplates(prevTemplates =>
+      prevTemplates.map(prevTemplate =>
+        prevTemplate.id === templateId ? { ...prevTemplate, ...updatedFields } : prevTemplate
+      )
+    )
+
+    if (selectedTemplate && selectedTemplate.id === templateId) {
+      setSelectedTemplate(prev => ({ ...prev, ...updatedFields }))
+    }
+  }
+
+    const handleDeleteTemplate = (id) => {
+      
+      setTemplates(prevTemplates => prevTemplates.filter(template => template.id !== id))
+
+      setSelectedTemplate(null)
+      setHandleTemplate(true)
+    }
+
+  useEffect(() => {
+    if (selectedTemplate) {
+      setHandleTemplate(false)
+    }
+  }, [selectedTemplate])
+
+
 
   const handleSave = () => {
-    alert(`GST: ${gstRate}%, Service: ₹${serviceCharge}`);
+    if (!selectedTemplateDefault.title.trim()) {
+      alert("Title is required to save the template.");
+      return;
+    }
+  
+    const isNewTemplate = !templates.some(
+      (template) => template.title === selectedTemplateDefault.title
+    );
+  
+    if (isNewTemplate) {
+      // Add new template
+      setTemplates([...templates, { ...selectedTemplateDefault, id: Date.now() }]);
+    } else {
+      // Update existing template
+      setTemplates((prevTemplates) =>
+        prevTemplates.map((template) =>
+          template.title === selectedTemplateDefault.title ? selectedTemplateDefault : template
+        )
+      );
+    }
+  
+    setIsEditMode(false); // Exit edit mode
+    setSelectedTemplateDefault({ title: '', emailBody: '' }); // Reset the form
   };
 
+
+
   return (
-    <div className="p-4 space-y-6">
-      <h1 className="text-2xl font-bold text-gray-700">Taxes & Charges</h1>
+    <div className="flex flex-col h-screen">
+      <TopBar title='Email Templates' placeholder='Search templates' />
+      <div className="flex flex-1 overflow-hidden">
+        <LeftPanel setSelectedTemplate={setSelectedTemplate}
+          setHandleTemplate={setHandleTemplate} templates={templates} />
 
-      {/* GST Rate Card */}
-      <div className="relative">
-        <div
-          onClick={() => setShowGSTCard(!showGSTCard)}
-          className="flex items-center cursor-pointer bg-gradient-to-r from-pink-500 to-red-500 p-4 rounded shadow text-white"
-        >
-          <h2 className="text-lg font-semibold flex-1">GST / Tax Rates</h2>
-          <svg
-            className={`w-5 h-5 transform transition-transform ${
-              showGSTCard ? "rotate-180" : ""
-            }`}
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M19 9l-7 7-7-7"
-            />
-          </svg>
-        </div>
+        {selectedTemplate ? (
+          <RightPanel
+            selectedTemplate={selectedTemplate}
+            setTemplates={setTemplates} templates={templates}
+            handleUpdateTemplate={handleUpdateTemplate}
+            handleDeleteTemplate={handleDeleteTemplate} />
+        ) : (
+          <RightPanel selectedTemplate={selectedTemplateDefault}
+            setTemplates={setTemplates} templates={templates}
+            handleUpdateTemplate={handleUpdateTemplate} />
+        )}
 
-        <Transition
-          show={showGSTCard}
-          enter="transition-all duration-300"
-          enterFrom="max-h-0 opacity-0"
-          enterTo="max-h-40 opacity-100"
-          leave="transition-all duration-300"
-          leaveFrom="max-h-40 opacity-100"
-          leaveTo="max-h-0 opacity-0"
-        >
-          <div className="bg-white rounded shadow p-4 mt-1 overflow-hidden">
-            <p className="text-sm text-gray-500 mb-4">
-              Configure the GST or other applicable taxes for your menu items.
-            </p>
-            <div className="flex gap-4 items-end">
-              <div>
-                <label className="block text-sm text-gray-600 mb-1">
-                  GST Rate (%)
-                </label>
-                <input
-                  type="number"
-                  className="border px-2 py-1 rounded w-20 focus:border-red-500 focus:outline-none transition"
-                  value={gstRate}
-                  onChange={(e) => setGstRate(Number(e.target.value))}
-                />
-              </div>
-              <button
-                className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded transition"
-                onClick={handleSave}
-              >
-                Save
-              </button>
-            </div>
-          </div>
-        </Transition>
-      </div>
-
-      {/* Service Charges Card */}
-      <div className="relative">
-        <div
-          onClick={() => setShowServiceCard(!showServiceCard)}
-          className="flex items-center cursor-pointer bg-gradient-to-r from-blue-500 to-green-500 p-4 rounded shadow text-white"
-        >
-          <h2 className="text-lg font-semibold flex-1">Service Charges</h2>
-          <svg
-            className={`w-5 h-5 transform transition-transform ${
-              showServiceCard ? "rotate-180" : ""
-            }`}
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M19 9l-7 7-7-7"
-            />
-          </svg>
-        </div>
-
-        <Transition
-          show={showServiceCard}
-          enter="transition-all duration-300"
-          enterFrom="max-h-0 opacity-0"
-          enterTo="max-h-40 opacity-100"
-          leave="transition-all duration-300"
-          leaveFrom="max-h-40 opacity-100"
-          leaveTo="max-h-0 opacity-0"
-        >
-          <div className="bg-white rounded shadow p-4 mt-1 overflow-hidden">
-            <p className="text-sm text-gray-500 mb-4">
-              Additional charges like service fee, packaging fee, etc.
-            </p>
-            <div className="flex gap-4 items-end">
-              <div>
-                <label className="block text-sm text-gray-600 mb-1">
-                  Service Charge (₹)
-                </label>
-                <input
-                  type="number"
-                  className="border px-2 py-1 rounded w-28 focus:border-red-500 focus:outline-none transition"
-                  value={serviceCharge}
-                  onChange={(e) => setServiceCharge(Number(e.target.value))}
-                />
-              </div>
-              <button
-                className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded transition"
-                onClick={handleSave}
-              >
-                Save
-              </button>
-            </div>
-          </div>
-        </Transition>
       </div>
     </div>
-  );
+  )
 }
+export default TaxesAndCharges;
+
+
+
+
+// const EmailTemplateManagement = () => {
+//   const initialTemplates = [
+//     { id: 1, title: 'Forgot Password', status: 'Active' },
+//     { id: 2, title: 'Order Receive Alert', status: 'Active' },
+//     { id: 3, title: 'Promotional Email', status: 'Inactive' },
+//     { id: 4, title: 'User Added', status: 'Active' },
+//   ];
+
+//   const [templates, setTemplates] = useState(initialTemplates);
+//   const [searchTerm, setSearchTerm] = useState('');
+//   const [newTemplate, setNewTemplate] = useState('');
+//   const navigate = useNavigate()
+
+//   const handleAddTemplate = () => {
+//     if (newTemplate.trim() === '') {
+//       alert('Template title cannot be empty');
+//       return;
+//     }
+//     const newId = templates.length ? templates[templates.length - 1].id + 1 : 1;
+//     const newTemplateObj = { id: newId, title: newTemplate, status: 'Active' };
+//     setTemplates([...templates, newTemplateObj]);
+//     setNewTemplate('');
+//   };
+
+//   const handleUpdateTemplate = (id) => {
+
+//     navigate('/email-tempalate-edit')
+//   };
+
+//   const handleDeleteTemplate = (id) => {
+//     if (window.confirm('Are you sure you want to delete this template?')) {
+//       setTemplates((prev) => prev.filter((template) => template.id !== id));
+//     }
+//   };
+
+//   const toggleStatus = (id) => {
+//     setTemplates((prev) =>
+//       prev.map((template) =>
+//         template.id === id
+//           ? { ...template, status: template.status === 'Active' ? 'Inactive' : 'Active' }
+//           : template
+//       )
+//     );
+//   };
+
+//   const columns = [
+//     {
+//       name: 'Sr. No.',
+//       selector: (row, index) => index + 1,
+//       width: '10%',
+//       sortable: false,
+//       cell: (row, index) => <div className="text-left">{index + 1}</div>,
+//     },
+//     {
+//       name: 'Title (En)',
+//       selector: (row) => row.title,
+//       width: '40%',
+//       sortable: true,
+//       cell: (row) => <div className="text-left">{row.title}</div>,
+//     },
+//     {
+//       name: 'Status',
+//       selector: (row) => row.status,
+//       width: '20%',
+//       sortable: true,
+//       center: true,
+//       cell: (row) => (
+//         <div
+//           className={`${
+//             row.status === 'Active' ? 'text-green-500' : 'text-red-500'
+//           } font-medium`}
+//         >
+//           {row.status}
+//         </div>
+//       ),
+//     },
+//     {
+//       name: 'Actions',
+//       width: '30%',
+//       sortable: false,
+//       right: true,
+//       cell: (row) => (
+//         <div className="flex justify-end items-center gap-2">
+//           <button
+//             className="p-2 text-white bg-blue-500 rounded hover:bg-blue-600"
+//             onClick={() => handleUpdateTemplate(row.id)}
+//           >
+//             <FaEdit />
+//           </button>
+//           <button
+//             className="p-2 text-white bg-red-500 rounded hover:bg-red-600"
+//             onClick={() => handleDeleteTemplate(row.id)}
+//           >
+//             <FaTrashAlt />
+//           </button>
+//           <button
+//             className={`p-2 rounded ${
+//               row.status === 'Active' ? 'bg-green-500 text-white' : 'bg-gray-500 text-white'
+//             }`}
+//             onClick={() => toggleStatus(row.id)}
+//           >
+//             {row.status === 'Active' ? <FaToggleOn /> : <FaToggleOff />}
+//           </button>
+//         </div>
+//       ),
+//     },
+//   ];
+
+//   const filteredTemplates = templates.filter((template) =>
+//     template.title.toLowerCase().includes(searchTerm.toLowerCase())
+//   );
+
+//   return (
+//     <div className="p-6">
+//       <h1 className="text-2xl font-bold mb-4">Email Template Management</h1>
+
+//       <div className="flex gap-2 mb-4">
+//         <input
+//           type="text"
+//           placeholder="New Template Title"
+//           className="px-2 py-1 border rounded"
+//           value={newTemplate}
+//           onChange={(e) => setNewTemplate(e.target.value)}
+//         />
+//         <button
+//           onClick={handleAddTemplate}
+//           className="px-4 py-2 text-white bg-green-500 rounded hover:bg-green-600"
+//         >
+//           Add Template
+//         </button>
+//       </div>
+
+//       <div className="flex justify-between items-center mb-4">
+//         <div className="flex items-center gap-2">
+//           <input
+//             type="text"
+//             placeholder="Search templates..."
+//             className="px-2 py-1 border rounded"
+//             value={searchTerm}
+//             onChange={(e) => setSearchTerm(e.target.value)}
+//           />
+//           <button className="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300">
+//             <FaSearch />
+//           </button>
+//         </div>
+//         <button
+//           className="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300"
+//           onClick={() => window.location.reload()}
+//         >
+//           <FaSyncAlt />
+//         </button>
+//       </div>
+
+//       <DataTable
+//         columns={[...columns]}
+//         data={filteredTemplates}
+//         pagination
+//         highlightOnHover
+//         striped
+//       />
+//     </div>
+//   );
+// };
+

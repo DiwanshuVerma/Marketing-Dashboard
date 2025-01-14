@@ -13,7 +13,7 @@ const types = [
   "Dishes Discount"
 ];
 
-const RightPanel = ({ selectedProduct, handleDeleteBanner, onDuplicate, banners }) => {
+const RightPanel = ({ selectedProduct,handleUpdateBanner, handleDeleteBanner, onDuplicate, banners }) => {
   const [isEditMode, setIsEditMode] = useState(false);
   const [data, setData] = useState(selectedProduct || {});
   const [selectedPages, setSelectedPages] = useState([]);
@@ -26,11 +26,17 @@ const RightPanel = ({ selectedProduct, handleDeleteBanner, onDuplicate, banners 
   }, [selectedProduct]);
 
   const handleFieldChange = (field, value) => {
+    console.log('handle field change')
     setData((prev) => ({ ...prev, [field]: value }));
   };
 
   const handleSave = () => {
-    console.log("Updated data:", { ...data, pages: selectedPages });
+    const updatedFields = {
+      ...data,
+      pages: selectedPages
+    };
+    console.log('handle save')
+    handleUpdateBanner(data._id, updatedFields);
     setIsEditMode(false);
   };
 
@@ -77,7 +83,10 @@ const RightPanel = ({ selectedProduct, handleDeleteBanner, onDuplicate, banners 
         onCancel={handleCancel}
         onDelete={handleDelete}
         onDuplicate={handleDuplicate}
+        onChange={handleFieldChange}
       />
+
+      {/* Banner Image */}
 
       <ImagesComponent
         isEditMode={isEditMode}
@@ -89,6 +98,9 @@ const RightPanel = ({ selectedProduct, handleDeleteBanner, onDuplicate, banners 
           }));
         }}
         />
+
+
+
         {/* Types Dropdown */}
       <TypesComponent
         isEditMode={isEditMode}
@@ -104,7 +116,6 @@ const RightPanel = ({ selectedProduct, handleDeleteBanner, onDuplicate, banners 
         onChange={handleFieldChange}
       />
 
-      {/* Banner Image */}
 
       {/* Pages Selection */}
       <PagesComponent

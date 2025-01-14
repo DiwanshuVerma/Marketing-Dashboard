@@ -12,6 +12,7 @@ import Offers from "./pages/Offers";
 import OutletSettings from "./pages/OutletSettings";
 import OutletInfo from "./pages/OutletInfo";
 import Help from "./pages/Help";
+import EmailTempalateEdit from "./components/EmailTempalateEdit";
 
 export default function App() {
   return (
@@ -20,6 +21,8 @@ export default function App() {
         <Route path="/" element={<DashboardHome />} />
         <Route path="/campaign-management" element={<CampaignManagement />} />
         <Route path="/email-templates" element={<EmailTemplates />} />
+        <Route path='/email-tempalate-edit' element={<EmailTempalateEdit />} />
+
         <Route path="/taxes-charges" element={<TaxesAndCharges />} />
         <Route path="/offers" element={<Offers />} />
         <Route path="/outlet-settings" element={<OutletSettings />} />

@@ -1,7 +1,7 @@
 // src/components/TopBar.jsx
 import React from "react";
 
-const TopBar = ({ title, onSearch }) => {
+const TopBar = ({ title, onSearch, placeholder }) => {
   return (
     <div className="w-full bg-white shadow-md border-b border-gray-200 px-6 py-4 flex items-center justify-between gap-4">
       {/* Title on the Left */}
@@ -13,7 +13,7 @@ const TopBar = ({ title, onSearch }) => {
       <div className="relative w-1/3 max-w-md">
         <input
           type="text"
-          placeholder="Search campaigns, types"
+          placeholder={placeholder}
           onChange={(e) => onSearch(e.target.value)}
           className="w-full border border-gray-300 pl-10 pr-3 py-2 rounded-md focus:outline-none focus:border-blue-500"
         />
