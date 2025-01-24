@@ -126,7 +126,7 @@ const LeftPanel = ({ onProductSelect, products = [], onCreateBanner }) => {
   };
 
   return (
-    <div className="w-1/3 bg-gray-50 border-r border-gray-200 p-4 flex flex-col justify-between h-full overflow-y-auto custom-scrollbar">
+    <div className="w-2/5 bg-gray-50 border-r border-gray-200 p-4 flex flex-col justify-between overflow-y-auto custom-scrollbar">
       {/* Campaigns */}
       <div>
         <h2 className="text-xl font-semibold mb-4 text-gray-700">
@@ -140,8 +140,7 @@ const LeftPanel = ({ onProductSelect, products = [], onCreateBanner }) => {
               className="flex justify-between items-center cursor-pointer mb-2 py-2 px-3 bg-white rounded-md shadow-sm hover:bg-gray-100 transition-all duration-300 ease-in-out"
             >
               <h3 className="font-medium text-gray-700">
-                {campaign.name} ({campaign.subCount || 0} sub,{" "}
-                {campaign.itemCount || 0} items)
+                {campaign.name}
               </h3>
               <FiChevronDown
                 className={`text-gray-500 transition-transform duration-300 ${openCategories[campaign.name] ? "rotate-180" : ""

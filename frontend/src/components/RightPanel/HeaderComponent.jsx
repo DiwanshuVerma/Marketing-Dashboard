@@ -45,11 +45,12 @@ const HeaderComponent = ({
           value={editableTitle}
           onChange={handleTitleChange}
           onKeyDown={handleKeyDown}
-          className="text-2xl font-semibold text-gray-800 bg-gray-50 border border-gray-300 rounded px-2 py-1 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent w-full mr-4"
+          placeholder="Title..."
+          className="text-2xl font-semibold text-gray-800 bg-gray-50 border border-gray-300 rounded px-2 py-1 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-transparent w-full mr-4"
           autoFocus
         />
       ) : (
-        <h2 className="text-2xl font-semibold text-gray-800">{title}</h2>
+        <input value={title} placeholder="Untitled" readOnly className="outline-none text-2xl font-semibold text-gray-800" />
       )}
       <div className="flex gap-3 flex-shrink-0">
         <button

@@ -15,7 +15,7 @@ const TypesComponent = ({
 
   const handleTypeChange = (e) => {
     console.log('salect')
-    const newValue = e.tatget.value
+    const newValue = e.target.value
     setType(newValue)
     if(onChange){
       onChange('type', newValue)

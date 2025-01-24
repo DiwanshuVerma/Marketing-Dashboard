@@ -1,27 +1,37 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { FiImage } from "react-icons/fi";
 
 const ImagesComponent = ({ isEditMode, image, onImageChange }) => {
-  const [previewImage, setPreviewImage] = useState(image); // Initialize with existing image
+  const [previewImage, setPreviewImage] = useState(null);
+
+  // Update preview when the `image` prop changes
+  useEffect(() => {
+    if (!image) {
+      // Reset preview image if no image is provided
+      setPreviewImage(null);
+    } else if (typeof image === "string") {
+      setPreviewImage(image); // Set preview to the existing URL
+    } else if (image instanceof File) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setPreviewImage(reader.result); // Set preview to base64 for File
+      };
+      reader.readAsDataURL(image);
+    }
+  }, [image]);
 
   const handleImageUpload = (e) => {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
-      const reader = new FileReader();
-
-      reader.onloadend = () => {
-        setPreviewImage(reader.result); // Preview the image
-        onImageChange(file); // Pass the file to parent component
-      };
-
-      reader.readAsDataURL(file); // Convert to base64
+      setPreviewImage(URL.createObjectURL(file)); // Preview the file
+      onImageChange(file); // Pass the file to the parent component
     }
   };
 
   return (
     <div className="mb-4">
       <h3 className="text-lg font-semibold mb-2">Banner Image</h3>
-      <div className="w-80 h-64 border rounded-md overflow-hidden flex items-center justify-center">
+      <div className="w-96 h-64 border rounded-md overflow-hidden flex items-center justify-center">
         {isEditMode ? (
           <>
             <input

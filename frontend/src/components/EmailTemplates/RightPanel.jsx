@@ -3,29 +3,39 @@ import EmailTemplateEdit from "../EmailTempalateEdit"
 import HeaderComponent from "../RightPanel/HeaderComponent"
 import ActionButtonsComponent from "../RightPanel/ActionButtonsComponent"
 
-const RightPanel = ({ selectedTemplate, handleUpdateTemplate, handleDeleteTemplate, setTemplates, handleTitle }) => {
+const RightPanel = ({ selectedTemplate, handleUpdateTemplate, handleDeleteTemplate, setUserTemplates, handleTitle }) => {
     const [isEditMode, setIsEditMode] = useState(false)
 
     const [data, setData] = useState(selectedTemplate || {})
+    // if(!selectedTemplate) setIsEditMode(true)
 
     useEffect(() => {
         if (selectedTemplate) {
             setData({ ...selectedTemplate })
         }
+        console.log(selectedTemplate.event)
     }, [selectedTemplate])
 
 
     const handleFieldChange = (field, value) => {
-        setData((prev) => ({ ...prev, [field]: value }));
-        console.log('data after change: ', data)
+        setData((prev) => ({ ...prev, [field]: value }))
       }
 
       const handleSave = () => {
-        const updatedFields = {...data}
-        handleUpdateTemplate(data.id, updatedFields);
-        console.log('updated fields:', updatedFields)
+        const updatedFields = { ...data };
+      
+        // Ensure status is set if it's missing or empty
+        if (!updatedFields.status) {
+          updatedFields.status = 'Inactive';
+        }
+        if (!updatedFields.type) {
+          updatedFields.type = 'user';
+        }
+        handleUpdateTemplate(data._id, updatedFields);
+        console.log('updated fields:', updatedFields);
         setIsEditMode(false);
-      }
+      };
+      
 
       const handleCancel = () => {
         setData({ ...selectedTemplate })
@@ -34,14 +44,14 @@ const RightPanel = ({ selectedTemplate, handleUpdateTemplate, handleDeleteTempla
 
       const handleDelete = () => {
         if(window.confirm('Are you sure?')){
-         handleDeleteTemplate(data.id)
+         handleDeleteTemplate(data._id)
         }
       }
 
     return (
-        <div className="w-3/5 p-6 bg-white shadow-md border-l border-gray-200 overflow-y-auto">
+        <div className="overflow-y-auto w-3/5 p-6 bg-white shadow-md border-l border-gray-200">
             <HeaderComponent
-                title={data.title || 'Untitled'}
+                title={data.title}
                 isEditMode={isEditMode}
                 onEdit={() => setIsEditMode(true)}
                 onCancel={handleCancel}

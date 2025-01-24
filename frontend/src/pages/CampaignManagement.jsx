@@ -8,7 +8,7 @@ import axios from 'axios';
 
 const CampaignManagement = () => {
   const [banners, setBanners] = useState([])
-  const [selectedProduct, setSelectedProduct] = useState(null);
+  const [selectedProduct, setSelectedProduct] = useState();
 
   const refetchBanners = () => {
     axios.get('https://marketing-dashboard-8274.onrender.com/banners')
@@ -23,6 +23,13 @@ const CampaignManagement = () => {
   useEffect(() => {
     refetchBanners(); // Initial fetch when the component mounts
   }, []);
+
+  useEffect(() => {
+    if (banners.length > 0) {
+      setSelectedProduct(banners[0]); // Set the first banner as the default
+    }
+  }, [banners]);
+
 
   const handleCreateBanner = (newBanner, imageFile) => {
     const formData = new FormData();
@@ -54,7 +61,7 @@ const CampaignManagement = () => {
         setBanners(prevBanners => prevBanners.filter(banner => banner._id !== bannerId));
         // Clear the selected product if it was the deleted banner
         if (selectedProduct && selectedProduct._id === bannerId) {
-          setSelectedProduct(null);
+          setSelectedProduct(null); 
         }
       })
       .catch(error => {
@@ -74,7 +81,7 @@ const handleUpdateBanner = (bannerId, updatedFields) => {
     } else {
       formData.append(key, updatedFields[key]);
     }
-  });
+  })
 
   axios.put(`https://marketing-dashboard-8274.onrender.com/banners/${bannerId}`, formData, {
     headers: {
@@ -94,7 +101,7 @@ const handleUpdateBanner = (bannerId, updatedFields) => {
       }
     })
     .catch(error => {
-      console.error('Error updating banner:', error);
+      console.error('Error updating banner:', error)
     });
 };
 
@@ -104,7 +111,7 @@ const handleUpdateBanner = (bannerId, updatedFields) => {
   }
 
   return (
-    <div className="flex flex-col h-screen">
+    <div className="flex flex-col h-full">
       <TopBar title="Campaigns" placeholder="Search campaigns, types"/>
       <div className="flex flex-1 overflow-hidden">
         <LeftPanel

@@ -91,7 +91,7 @@ function Offers() {
               items={allItems}
             />
           </div>
-
+          
           {/* Right Column: Offers List */}
           <div className="flex-1 bg-white shadow-sm rounded p-4">
             <OffersList

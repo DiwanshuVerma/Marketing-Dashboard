@@ -18,7 +18,7 @@ exports.getAllBanners = async (req, res) => {
 exports.createBanner = async (req, res) => {
   try {
     const { title, type, isDefault, status } = req.body;
-
+    console.log('creating banner inside controller')
     const banner = new Banner({
       title,
       type,

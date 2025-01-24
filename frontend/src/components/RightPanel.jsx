@@ -13,14 +13,15 @@ const types = [
   "Dishes Discount"
 ];
 
-const RightPanel = ({ selectedProduct,handleUpdateBanner, handleDeleteBanner, onDuplicate, banners }) => {
+const RightPanel = ({ selectedProduct, handleUpdateBanner, handleDeleteBanner, onDuplicate, banners }) => {
   const [isEditMode, setIsEditMode] = useState(false);
   const [data, setData] = useState(selectedProduct || {});
-  const [selectedPages, setSelectedPages] = useState([]);
+  const [selectedPages, setSelectedPages] = useState(selectedProduct.pages || []);
 
   useEffect(() => {
     if (selectedProduct) {
       setData({ ...selectedProduct });
+      console.log('slectd prodct: ', selectedProduct)
       setSelectedPages(selectedProduct.pages || []); // Dummy for now
     }
   }, [selectedProduct]);
@@ -74,7 +75,7 @@ const RightPanel = ({ selectedProduct,handleUpdateBanner, handleDeleteBanner, on
   }
 
   return (
-    <div className="w-2/3 p-6 bg-white shadow-md border-l border-gray-200 overflow-y-auto">
+    <div className="w-3/5 p-6 bg-white shadow-md border-l border-gray-200 overflow-y-auto">
       {/* Header */}
       <HeaderComponent
         title={data.title || "Untitled"}
@@ -90,18 +91,16 @@ const RightPanel = ({ selectedProduct,handleUpdateBanner, handleDeleteBanner, on
 
       <ImagesComponent
         isEditMode={isEditMode}
-        image={data.photo}
+        image={data.photo} // Can be a URL (string) or a File object
         onImageChange={(file) => {
           setData((prev) => ({
             ...prev,
-            photo: file,
+            'photo': file, // Store File object for FormData upload
           }));
         }}
-        />
+      />
 
-
-
-        {/* Types Dropdown */}
+      {/* Types Dropdown */}
       <TypesComponent
         isEditMode={isEditMode}
         data={data}
