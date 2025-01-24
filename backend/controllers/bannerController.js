@@ -18,15 +18,15 @@ exports.getAllBanners = async (req, res) => {
 exports.createBanner = async (req, res) => {
   try {
     const { title, type, isDefault, status } = req.body;
-    console.log('creating banner inside controller')
     const banner = new Banner({
       title,
       type,
       isDefault: isDefault || false,
       status: status || 'Inactive',
     });
-
+    
     await banner.save();
+    console.log('creating banner inside controller')
 
     res.status(201).json({ message: 'Banner created successfully', banner });
   } catch (err) {
@@ -70,11 +70,23 @@ exports.deleteBanner = async (req, res) => {
     if (!banner) return res.status(404).send('Banner not found');
 
     if (banner.photo) {
+      console.log('inside delete banner unlink photo')
       fs.unlinkSync(path.join(__dirname, '../../', banner.photo));
     }
 
     res.status(204).send();
   } catch (err) {
     res.status(500).send(err.message);
+  }
+};
+
+
+// return active banners
+exports.getActiveBanners = async (req, res) => {
+  try {
+    const activeBanners = await Banner.find({ status: 'Active' });
+    res.status(200).json(activeBanners);
+  } catch (err) {
+    res.status(500).json({ error: 'Error fetching active banners', message: err.message });
   }
 };
