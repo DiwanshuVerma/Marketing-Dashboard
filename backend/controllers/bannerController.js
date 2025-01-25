@@ -2,6 +2,7 @@ const Banner = require('../models/Banner');
 const fs = require('fs');
 const path = require('path');
 const uploadToCloudinary = require('../utils/cloudinary');
+const cloudinary = require("cloudinary").v2;
 
 // Get all banners
 exports.getAllBanners = async (req, res) => {
@@ -34,25 +35,43 @@ exports.createBanner = async (req, res) => {
   }
 };
 
+
 // Update a banner
 exports.updateBanner = async (req, res) => {
   try {
-    const { title, type, isDefault, status, startDate, endDate } = req.body;
+    const { title, type, isDefault, startDate, endDate } = req.body;
     const banner = await Banner.findById(req.params.id);
 
     if (!banner) return res.status(404).send('Banner not found');
-    console.log('update banners')
+    console.log('Updating banner');
 
     // Update the fields only if they are provided
     if (title) banner.title = title;
     if (type) banner.type = type;
     if (typeof isDefault !== 'undefined') banner.isDefault = isDefault;
-    if (status) banner.status = status;
     if (startDate) banner.startDate = startDate;
     if (endDate) banner.endDate = endDate;
+
+    // Calculate and update the status dynamically using UTC
+    const nowUTC = new Date(); // Current UTC time
+    const startUTC = startDate ? new Date(startDate) : null;
+    const endUTC = endDate ? new Date(endDate) : null;
+
+    if (startUTC && endUTC) {
+      if (nowUTC >= startUTC && nowUTC <= endUTC) {
+        banner.status = 'Active';
+      } else if (nowUTC < startUTC) {
+        banner.status = 'Upcoming';
+      } else {
+        banner.status = 'Inactive';
+      }
+    } else {
+      banner.status = 'Inactive'; // Default to Inactive if dates are missing
+    }
+
     // Handle image upload if provided
     if (req.file) {
-      console.log('inside update banner api, file upload')
+      console.log('Handling file upload in update banner API');
       banner.photo = await uploadToCloudinary(req.file.path, 'banners');
     }
 
@@ -63,20 +82,35 @@ exports.updateBanner = async (req, res) => {
   }
 };
 
+
+
 // to delete
 exports.deleteBanner = async (req, res) => {
   try {
-    const banner = await Banner.findByIdAndDelete(req.params.id);
+    const {id} = req.params
+
+    const banner = await Banner.findById(req.params.id);
     if (!banner) return res.status(404).send('Banner not found');
 
-    if (banner.photo) {
-      console.log('inside delete banner unlink photo')
-      fs.unlinkSync(path.join(__dirname, '../../', banner.photo));
+    const imageUrl = banner.photo
+    if (imageUrl) {
+
+      console.log('deleting banner photo')
+
+      const publicIdMatch = imageUrl.match(/\/([^/]+)\.[a-z]+$/i);
+      if (publicIdMatch) {
+        const publicId = `banners/${publicIdMatch[1]}`; // Prepend folder name if applicable
+
+        // Delete the image from Cloudinary
+        await cloudinary.uploader.destroy(publicId);
+      }
     }
 
-    res.status(204).send();
+    await Banner.findByIdAndDelete(id)
+
+    return res.status(204).json({ message: "Banner deleted successfully" });
   } catch (err) {
-    res.status(500).send(err.message);
+    res.status(500).json({ message: "Error deleting banner", Error: err.message});
   }
 };
 
