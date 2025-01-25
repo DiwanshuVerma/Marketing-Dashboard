@@ -116,9 +116,18 @@ exports.deleteBanner = async (req, res) => {
 
 
 // return active banners
-exports.getActiveBanners = async (req, res) => {
+exports.getActiveResBanners = async (req, res) => {
   try {
-    const activeBanners = await Banner.find({ status: 'Active' });
+    const activeBanners = await Banner.find({ status: 'Active', type: 'Restaurant Discount' });
+    res.status(200).json(activeBanners);
+  } catch (err) {
+    res.status(500).json({ error: 'Error fetching active banners', message: err.message });
+  }
+};
+// return active banners
+exports.getActiveDisBanners = async (req, res) => {
+  try {
+    const activeBanners = await Banner.find({ status: 'Active', type: 'Dishes Discount' });
     res.status(200).json(activeBanners);
   } catch (err) {
     res.status(500).json({ error: 'Error fetching active banners', message: err.message });
