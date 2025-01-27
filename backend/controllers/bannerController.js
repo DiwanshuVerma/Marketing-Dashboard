@@ -51,12 +51,20 @@ exports.updateBanner = async (req, res) => {
     if (status) banner.status = status;
     if (typeof isDefault !== 'undefined') banner.isDefault = isDefault;
 
-    // Convert local time strings to UTC dates
+    // Add 5:30 hours to the received local time to convert it to UTC
+    const addOffset = (dateString) => {
+      if (!dateString) return null;
+      const date = new Date(dateString);
+      date.setHours(date.getHours() + 5); // Add 5 hours
+      date.setMinutes(date.getMinutes() + 30); // Add 30 minutes
+      return date;
+    };
+
     if (startDate) {
-      banner.startDate = new Date(startDate); // Converts local time to UTC
+      banner.startDate = addOffset(startDate); // Convert local time to UTC
     }
     if (endDate) {
-      banner.endDate = new Date(endDate); // Converts local time to UTC
+      banner.endDate = addOffset(endDate); // Convert local time to UTC
     }
 
     // Validate dates
@@ -93,7 +101,6 @@ exports.updateBanner = async (req, res) => {
     res.status(400).send(err.message);
   }
 };
-
 
 // to delete
 exports.deleteBanner = async (req, res) => {
