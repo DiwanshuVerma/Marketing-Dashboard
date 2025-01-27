@@ -50,13 +50,18 @@ exports.updateBanner = async (req, res) => {
     if (type) banner.type = type;
     if (status) banner.status = status;
     if (typeof isDefault !== 'undefined') banner.isDefault = isDefault;
-    if (startDate) banner.startDate = startDate;
-    if (endDate) banner.endDate = endDate;
+    if (startDate) banner.startDate = new Date(startDate); // Ensure it's a Date object
+    if (endDate) banner.endDate = new Date(endDate); // Ensure it's a Date object
+
+    // Validate dates
+    if (banner.startDate && banner.endDate && banner.startDate >= banner.endDate) {
+      return res.status(400).send('End date must be after start date');
+    }
 
     // Calculate and update the status dynamically using UTC
     const nowUTC = new Date(); // Current UTC time
-    const startUTC = startDate ? new Date(startDate) : null;
-    const endUTC = endDate ? new Date(endDate) : null;
+    const startUTC = banner.startDate ? new Date(banner.startDate) : null;
+    const endUTC = banner.endDate ? new Date(banner.endDate) : null;
 
     if (startUTC && endUTC) {
       if (nowUTC >= startUTC && nowUTC <= endUTC) {
