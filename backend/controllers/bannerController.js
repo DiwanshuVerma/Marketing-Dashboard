@@ -50,8 +50,14 @@ exports.updateBanner = async (req, res) => {
     if (type) banner.type = type;
     if (status) banner.status = status;
     if (typeof isDefault !== 'undefined') banner.isDefault = isDefault;
-    if (startDate) banner.startDate = new Date(startDate); // Ensure it's a Date object
-    if (endDate) banner.endDate = new Date(endDate); // Ensure it's a Date object
+
+    // Convert local time strings to UTC dates
+    if (startDate) {
+      banner.startDate = new Date(startDate); // Converts local time to UTC
+    }
+    if (endDate) {
+      banner.endDate = new Date(endDate); // Converts local time to UTC
+    }
 
     // Validate dates
     if (banner.startDate && banner.endDate && banner.startDate >= banner.endDate) {
@@ -87,7 +93,6 @@ exports.updateBanner = async (req, res) => {
     res.status(400).send(err.message);
   }
 };
-
 
 
 // to delete
