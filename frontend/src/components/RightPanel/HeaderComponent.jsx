@@ -1,21 +1,25 @@
 // src/components/RightPanel/HeaderComponent.jsx
-import React, {useEffect, useState} from "react";
+import React, { useEffect, useState } from "react";
 import { FiEdit, FiTrash2, FiCopy, FiX } from "react-icons/fi";
-
+import { FaToggleOff, FaToggleOn } from "react-icons/fa";
 
 const HeaderComponent = ({
-  title,
+  data,
   isEditMode,
   onEdit,
   onCancel,
   onDelete,
   onChange
 }) => {
-  const [editableTitle, setEditableTitle] = useState(title);
+  const [editableTitle, setEditableTitle] = useState(data.title || 'Untitled');
+
+  const [isDefault, setIsDefault] = useState(data.isDefault || false);
+  const [isActive, setIsActive] = useState(data.isDefault === 'Active');
 
   useEffect(() => {
-    setEditableTitle(title);
-  }, [title, isEditMode]);
+    setEditableTitle(data.title);
+    setIsDefault(data.isDefault || false)
+  }, [data]);
 
   const handleTitleChange = (e) => {
     const newValue = e.target.value;
@@ -29,14 +33,21 @@ const HeaderComponent = ({
     if (e.key === 'Enter') {
       onCancel();
     } else if (e.key === 'Escape') {
-      setEditableTitle(title);
+      setEditableTitle(data.title);
       if (onChange) {
-        onChange('name', title);
+        onChange('name', data.title);
       }
       onCancel();
     }
   }
 
+  const handleDefault = () => {
+    const newValue = !isDefault;
+    setIsDefault(newValue);
+    if (onChange) {
+      onChange("isDefault", newValue);
+    }
+  };
   return (
     <div className="flex justify-between items-center mb-4 border-b pb-2">
       {isEditMode ? (
@@ -50,9 +61,33 @@ const HeaderComponent = ({
           autoFocus
         />
       ) : (
-        <input value={title} placeholder="Untitled" readOnly className="outline-none text-2xl font-semibold text-gray-800" />
+        <input value={data.title} placeholder="Untitled" readOnly className="outline-none text-2xl font-semibold text-gray-800" />
       )}
+
       <div className="flex gap-3 flex-shrink-0">
+
+        {data.isDefault !== undefined && (
+          <div className="flex items-center gap-2">
+            <label
+              className="block text-gray-700 text-sm font-bold"
+              htmlFor="default"
+            >
+              Default:
+            </label>
+            <button
+              id="default"
+              className={isDefault ? "text-green-500" : "text-gray-500"}
+              onClick={handleDefault}
+              disabled={!isEditMode}
+            >
+              {isDefault ? <FaToggleOn size={30} /> : <FaToggleOff size={30} />}
+            </button>
+          </div>
+        )}
+
+
+
+
         <button
           onClick={onDelete}
           className="text-red-500 hover:text-red-700"

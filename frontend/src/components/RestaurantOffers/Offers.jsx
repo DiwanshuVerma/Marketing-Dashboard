@@ -2,13 +2,12 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
 
-import dummy from "../data/dummy";
-import { initialOffers } from "../data/offersData";
-import { filterCategoriesByOffers } from "../utils/filterMenu";
+import dummy from "../../data/dummy";
+import {initialOffers} from '../../data/offersData'
+import { filterCategoriesByOffers } from "../../utils/filterMenu";
 
-import CreateOfferForm from "../components/Offers/CreateOfferForm";
-import OffersList from "../components/Offers/OffersList";
-import CategoryDisplay from "../components/Offers/CategoryDisplay";
+import CreateOfferForm from "./CreateOfferForm";
+import OffersList from "./OffersList";
 
 function Offers() {
   const { deliveryCategories, dineInCategories } = dummy;
@@ -62,12 +61,12 @@ function Offers() {
 
   return (
     <motion.div
-      className="min-h-screen bg-gray-100"
+      className="bg-gray-100"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.4 }}
     >
-      <div className="p-6 max-w-6xl mx-auto">
+      <div className="p-6 max-w-[1300px] mx-auto">
         <motion.h1
           className="text-3xl font-bold text-gray-800 mb-6"
           initial={{ opacity: 0, y: -20 }}
@@ -83,7 +82,7 @@ function Offers() {
          */}
         <div className="flex flex-col md:flex-row gap-8 md:items-stretch">
           {/* Left Column: Create Offer Form */}
-          <div className="flex-1 bg-white shadow-sm rounded p-4">
+          <div className="flex-1 bg-white shadow-sm rounded p-4 h-fit">
             <CreateOfferForm
               onSave={handleAddOffer}
               categories={uniqueCategories}
@@ -91,7 +90,7 @@ function Offers() {
               items={allItems}
             />
           </div>
-          
+
           {/* Right Column: Offers List */}
           <div className="flex-1 bg-white shadow-sm rounded p-4">
             <OffersList
@@ -102,20 +101,8 @@ function Offers() {
             />
           </div>
         </div>
-
-        {/* Items with Offers (Delivery) */}
-        <CategoryDisplay
-          data={impactedDelivery}
-          offers={offers}
-          title="Delivery"
-        />
-        {/* Items with Offers (Dine-In) */}
-        <CategoryDisplay
-          data={impactedDineIn}
-          offers={offers}
-          title="Dine-In"
-        />
       </div>
+
     </motion.div>
   );
 }

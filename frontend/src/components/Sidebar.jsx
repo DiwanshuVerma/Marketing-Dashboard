@@ -112,7 +112,7 @@ export default function Sidebar() {
               "CMS"
             )}
           </li>
-          <li>{navItem("/offers", HiOutlineGift, "Offers")}</li>
+          <li>{navItem("/RestaurantOffers", HiOutlineGift, "Restaurant Offers")}</li>
           <li>
             {navItem("/outlet-settings", HiOutlineCog, "Outlet settings")}
           </li>

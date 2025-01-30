@@ -1,4 +1,237 @@
 export default {
+
+   restaurants :[
+    {
+      id: 1,
+      name: "Spice Delight",
+      categories: [
+        {
+          name: "Starters",
+          subcategories: [
+            {
+              name: "Veg Starters",
+              items: ["Paneer Tikka", "Crispy Corn", "Spring Rolls"]
+            },
+            {
+              name: "Non-Veg Starters",
+              items: ["Chicken Tikka", "Fish Fingers", "Mutton Seekh Kebab"]
+            }
+          ]
+        },
+        {
+          name: "Main Course",
+          subcategories: [
+            {
+              name: "Veg Main Course",
+              items: ["Paneer Butter Masala", "Dal Makhani", "Veg Biryani"]
+            },
+            {
+              name: "Non-Veg Main Course",
+              items: ["Butter Chicken", "Mutton Rogan Josh", "Chicken Biryani"]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      id: 2,
+      name: "Tandoori Treats",
+      categories: [
+        {
+          name: "Starters",
+          subcategories: [
+            {
+              name: "Veg Starters",
+              items: ["Stuffed Mushrooms", "Hara Bhara Kebab", "Aloo Tikki"]
+            },
+            {
+              name: "Non-Veg Starters",
+              items: ["Tandoori Chicken", "Prawn Koliwada", "Lamb Chops"]
+            }
+          ]
+        },
+        {
+          name: "Main Course",
+          subcategories: [
+            {
+              name: "Veg Main Course",
+              items: ["Shahi Paneer", "Baingan Bharta", "Jeera Aloo"]
+            },
+            {
+              name: "Non-Veg Main Course",
+              items: ["Chicken Curry", "Fish Masala", "Mutton Handi"]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      id: 3,
+      name: "Flavors of India",
+      categories: [
+        {
+          name: "Starters",
+          subcategories: [
+            {
+              name: "Veg Starters",
+              items: ["Samosa", "Chilli Paneer", "Dahi Ke Kebab"]
+            },
+            {
+              name: "Non-Veg Starters",
+              items: ["Reshmi Kebab", "Tangdi Kebab", "Crab Lollipop"]
+            }
+          ]
+        },
+        {
+          name: "Main Course",
+          subcategories: [
+            {
+              name: "Veg Main Course",
+              items: ["Malai Kofta", "Mix Veg Curry", "Chana Masala"]
+            },
+            {
+              name: "Non-Veg Main Course",
+              items: ["Chicken Korma", "Prawn Curry", "Mutton Kadai"]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      id: 4,
+      name: "Royal Feast",
+      categories: [
+        {
+          name: "Starters",
+          subcategories: [
+            {
+              name: "Veg Starters",
+              items: ["Corn Cheese Balls", "Paneer Pakora", "Hakka Noodles"]
+            },
+            {
+              name: "Non-Veg Starters",
+              items: ["Chicken Wings", "Mutton Cutlets", "Fish Tikka"]
+            }
+          ]
+        },
+        {
+          name: "Main Course",
+          subcategories: [
+            {
+              name: "Veg Main Course",
+              items: ["Palak Paneer", "Navratan Korma", "Kadhi Pakora"]
+            },
+            {
+              name: "Non-Veg Main Course",
+              items: ["Mutton Keema", "Butter Prawns", "Chicken Do Pyaza"]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      id: 5,
+      name: "The Grand Kitchen",
+      categories: [
+        {
+          name: "Starters",
+          subcategories: [
+            {
+              name: "Veg Starters",
+              items: ["Tandoori Broccoli", "Cheese Corn Nuggets", "Paneer Kurkure"]
+            },
+            {
+              name: "Non-Veg Starters",
+              items: ["Chicken Popcorn", "Mutton Galouti Kebab", "Fish Fry"]
+            }
+          ]
+        },
+        {
+          name: "Main Course",
+          subcategories: [
+            {
+              name: "Veg Main Course",
+              items: ["Kashmiri Dum Aloo", "Rajma Chawal", "Bhindi Masala"]
+            },
+            {
+              name: "Non-Veg Main Course",
+              items: ["Chicken Bharta", "Mutton Nihari", "Prawn Malai Curry"]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      id: 6,
+      name: "Tandoori Treats",
+      categories: [
+        {
+          name: "Starters",
+          subcategories: [
+            {
+              name: "Veg Starters",
+              items: ["Stuffed Mushrooms", "Hara Bhara Kebab", "Aloo Tikki"]
+            },
+            {
+              name: "Non-Veg Starters",
+              items: ["Tandoori Chicken", "Prawn Koliwada", "Lamb Chops"]
+            }
+          ]
+        },
+        {
+          name: "Main Course",
+          subcategories: [
+            {
+              name: "Veg Main Course",
+              items: ["Shahi Paneer", "Baingan Bharta", "Jeera Aloo"]
+            },
+            {
+              name: "Non-Veg Main Course",
+              items: ["Chicken Curry", "Fish Masala", "Mutton Handi"]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      id: 7,
+      name: "Spice Delight",
+      categories: [
+        {
+          name: "Starters",
+          subcategories: [
+            {
+              name: "Veg Starters",
+              items: ["Paneer Tikka", "Crispy Corn", "Spring Rolls"]
+            },
+            {
+              name: "Non-Veg Starters",
+              items: ["Chicken Tikka", "Fish Fingers", "Mutton Seekh Kebab"]
+            }
+          ]
+        },
+        {
+          name: "Main Course",
+          subcategories: [
+            {
+              name: "Veg Main Course",
+              items: ["Paneer Butter Masala", "Dal Makhani", "Veg Biryani"]
+            },
+            {
+              name: "Non-Veg Main Course",
+              items: ["Butter Chicken", "Mutton Rogan Josh", "Chicken Biryani"]
+            }
+          ]
+        }
+      ]
+    },
+  ],
+  
+
+
+
+
+
   deliveryCategories: [
     {
       name: "Starters",

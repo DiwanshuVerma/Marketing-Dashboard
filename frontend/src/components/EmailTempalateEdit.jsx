@@ -10,9 +10,11 @@ const EmailTemplateEdit = ({ template, onChange, isEditMode }) => {
   const editorRef = useRef(null);
   const [emailSubject, setEmailSubject] = useState(template.emailSubject || "");
   const [emailBody, setEmailBody] = useState(template.emailBody || "Hi [Name],");
-  const [status, setStatus] = useState(template.status || "Inactive");
   const [description, setDescription] = useState(template.description || "");
+
+  const [status, setStatus] = useState(template.status || "Inactive");
   const [isActive, setIsActive] = useState(template.status === "Active");
+  
   const [type, setType] = useState(template.type || 'Select Type');
   const [event, setEvent] = useState(template.event || 'Select Event');
 

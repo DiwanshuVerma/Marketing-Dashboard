@@ -8,10 +8,6 @@ import ActionButtonsComponent from "./RightPanel/ActionButtonsComponent";
 import PagesComponent from "./RightPanel/PagesComponent";
 import axios from "axios";
 
-const types = [
-  "Restaurant Discount",
-  "Dishes Discount"
-];
 
 const RightPanel = ({ selectedProduct, handleUpdateBanner, handleDeleteBanner, onDuplicate, banners }) => {
   const [isEditMode, setIsEditMode] = useState(false);
@@ -78,7 +74,7 @@ const RightPanel = ({ selectedProduct, handleUpdateBanner, handleDeleteBanner, o
     <div className="w-3/5 p-6 bg-white shadow-md border-l border-gray-200 overflow-y-auto">
       {/* Header */}
       <HeaderComponent
-        title={data.title || "Untitled"}
+        data={data}
         isEditMode={isEditMode}
         onEdit={() => setIsEditMode(true)}
         onCancel={handleCancel}
@@ -104,7 +100,6 @@ const RightPanel = ({ selectedProduct, handleUpdateBanner, handleDeleteBanner, o
       <TypesComponent
         isEditMode={isEditMode}
         data={data}
-        types={types}
         onChange={handleFieldChange}
       />
 

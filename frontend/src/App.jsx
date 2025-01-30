@@ -8,7 +8,7 @@ import DashboardHome from "./pages/DashboardHome";
 import CampaignManagement from "./pages/CampaignManagement";
 import EmailTemplates from "./pages/EmailTemplates";
 import TaxesAndCharges from "./pages/TaxesAndCharges";
-import Offers from "./pages/Offers";
+import RestaurantOffers from "./pages/RestaurantOffers";
 import OutletSettings from "./pages/OutletSettings";
 import OutletInfo from "./pages/OutletInfo";
 import Help from "./pages/Help";
@@ -24,7 +24,7 @@ export default function App() {
         <Route path='/email-tempalate-edit' element={<EmailTempalateEdit />} />
 
         <Route path="/CMS" element={<TaxesAndCharges />} />
-        <Route path="/offers" element={<Offers />} />
+        <Route path="/RestaurantOffers" element={<RestaurantOffers />} />
         <Route path="/outlet-settings" element={<OutletSettings />} />
         <Route path="/outlet-info" element={<OutletInfo />} />
         <Route path="/help" element={<Help />} />

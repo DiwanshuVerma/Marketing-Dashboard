@@ -11,7 +11,7 @@ const CampaignManagement = () => {
   const [selectedProduct, setSelectedProduct] = useState();
 
   const refetchBanners = () => {
-    axios.get('https://marketing-dashboard-8274.onrender.com/banners')
+    axios.get('http://localhost:5000/banners')
       .then(response => {
         setBanners(response.data);
       })
@@ -24,27 +24,30 @@ const CampaignManagement = () => {
     refetchBanners(); // Initial fetch when the component mounts
   }, []);
 
-  useEffect(() => {
-    if (banners.length > 0) {
-      setSelectedProduct(banners[0]); // Set the first banner as the default
-    }
-  }, [banners]);
+  // useEffect(() => {
+  //   if (banners.length > 0) {
+      // setSelectedProduct(banners[0]); // Set the first banner as the default
+    // }
+  // }, [banners]);
 
 
   const handleCreateBanner = (newBanner, imageFile) => {
-    const formData = new FormData();
-    formData.append('title', newBanner.title);
-    formData.append('type', newBanner.type);
-    formData.append('isDefault', newBanner.isDefault);
-    formData.append('status', newBanner.status);
-    if (imageFile) formData.append('photo', imageFile); // Append only if imageFile exists
-    if (newBanner.startDate) formData.append('startDate', newBanner.startDate); // Append only if startDate exists
-    if (newBanner.endDate) formData.append('endDate', newBanner.endDate); // Append only if endDate exists
-
-    axios.post('https://marketing-dashboard-8274.onrender.com/banners', formData, {
+    // Create a payload object
+    const payload = {
+      title: newBanner.title,
+      type: newBanner.type,
+      isDefault: newBanner.isDefault || false,
+      status: newBanner.status || "Inactive",
+      startDate: newBanner.startDate || null,
+      endDate: newBanner.endDate || null,
+      photo: imageFile || null, // Pass the imageFile directly (if exists)
+    };
+  
+    // Send the payload as JSON
+    axios.post('http://localhost:5000/banners', payload, {
       headers: {
-        'Content-Type': 'multipart/form-data'
-      }
+        'Content-Type': 'application/json', // Specify JSON format
+      },
     })
       .then(() => {
         refetchBanners(); // Re-fetch banners after creation
@@ -53,9 +56,11 @@ const CampaignManagement = () => {
         console.error('Error creating banner:', error);
       });
   };
+  
 
   const handleDeleteBanner = (bannerId) => {
-    axios.delete(`https://marketing-dashboard-8274.onrender.com/banners/${bannerId}`)
+    console.log('handle delte banner FE, bannerId: ',bannerId)
+    axios.delete(`http://localhost:5000/banners/${bannerId}`)
       .then(() => {
         // Update the state to remove the deleted banner
         setBanners(prevBanners => prevBanners.filter(banner => banner._id !== bannerId));
@@ -83,7 +88,7 @@ const handleUpdateBanner = (bannerId, updatedFields) => {
     }
   })
 
-  axios.put(`https://marketing-dashboard-8274.onrender.com/banners/${bannerId}`, formData, {
+  axios.put(`http://localhost:5000/banners/${bannerId}`, formData, {
     headers: {
       'Content-Type': 'multipart/form-data'
     }

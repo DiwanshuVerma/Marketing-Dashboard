@@ -1,6 +1,7 @@
 // src/components/Offers/CreateOfferForm.jsx
 import React, { useState } from "react";
 import { motion } from "framer-motion";
+import Dates from "../RightPanel/Dates";
 
 function CreateOfferForm({ onSave, categories, subCategories, items }) {
   const [name, setName] = useState("");
@@ -45,7 +46,7 @@ function CreateOfferForm({ onSave, categories, subCategories, items }) {
 
   return (
     <motion.div
-      className="border p-4 rounded shadow-md bg-white"
+      className="border p-4 rounded shadow-md h-full"
       initial={{ opacity: 0, y: -10 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4 }}
@@ -67,18 +68,6 @@ function CreateOfferForm({ onSave, categories, subCategories, items }) {
         </div>
 
         <div>
-          <label className="block font-semibold text-gray-700">
-            Offer Code
-          </label>
-          <input
-            className="border w-full px-3 py-1.5 rounded focus:outline-none focus:border-blue-400"
-            value={code}
-            onChange={(e) => setCode(e.target.value)}
-            placeholder="e.g., START20"
-          />
-        </div>
-
-        <div>
           <label className="block font-semibold text-gray-700">Discount</label>
           <input
             className="border w-full px-3 py-1.5 rounded focus:outline-none focus:border-blue-400"
@@ -89,17 +78,22 @@ function CreateOfferForm({ onSave, categories, subCategories, items }) {
         </div>
 
         <div>
-          <label className="block font-semibold text-gray-700">Scope</label>
+          <label className="block font-semibold text-gray-700 ">Offer Type</label>
           <select
-            className="border w-full px-3 py-1.5 rounded focus:outline-none focus:border-blue-400"
+            className="border bg-gray-100 w-full px-3 py-1.5 rounded focus:outline-none focus:border-blue-400"
             value={scope}
             onChange={(e) => setScope(e.target.value)}
           >
-            <option value="item">Item</option>
-            <option value="subcategory">Subcategory</option>
-            <option value="category">Category</option>
+            <option value="Restaurant-wide">Restaurant-wide</option>
+            <option value="Dish-specific">Dish-specific</option>
+            <option value="Menu-wide discounts">Menu-wide discounts</option>
           </select>
         </div>
+
+        <div>
+          <Dates />
+        </div>
+        {/* 
 
         {scope === "category" && (
           <div>
@@ -160,7 +154,7 @@ function CreateOfferForm({ onSave, categories, subCategories, items }) {
               ))}
             </div>
           </div>
-        )}
+        )} */}
 
         <button
           className="mt-2 bg-blue-600 text-white px-5 py-2 rounded hover:bg-blue-700 transition-colors"

@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { FiImage } from "react-icons/fi";
+const imageUrl = 'https://placehold.co/1100x300'
+
 
 const ImagesComponent = ({ isEditMode, image, onImageChange }) => {
   const [previewImage, setPreviewImage] = useState(null);
@@ -31,7 +33,7 @@ const ImagesComponent = ({ isEditMode, image, onImageChange }) => {
   return (
     <div className="mb-4">
       <h3 className="text-lg font-semibold mb-2">Banner Image</h3>
-      <div className="w-96 h-64 border rounded-md overflow-hidden flex items-center justify-center">
+      <div className="w-full h-72 border rounded-md">
         {isEditMode ? (
           <>
             <input
@@ -43,7 +45,7 @@ const ImagesComponent = ({ isEditMode, image, onImageChange }) => {
             />
             <label
               htmlFor="image-upload"
-              className="cursor-pointer flex items-center justify-center"
+              className="cursor-pointer"
             >
               {previewImage ? (
                 <img
@@ -52,7 +54,11 @@ const ImagesComponent = ({ isEditMode, image, onImageChange }) => {
                   className="w-full h-full object-cover"
                 />
               ) : (
-                <FiImage size={32} className="text-gray-400" />
+                <img
+          src={imageUrl}
+          alt={'img'}
+          className="w-full h-full object-cover transition-transform duration-300"
+        />
               )}
             </label>
           </>
@@ -60,10 +66,14 @@ const ImagesComponent = ({ isEditMode, image, onImageChange }) => {
           <img
             src={previewImage}
             alt="Banner"
-            className="w-full h-full object-cover"
+            className="w-full h-full object-contain"
           />
         ) : (
-          <FiImage size={32} className="text-gray-400" />
+          <img
+          src={imageUrl}
+          alt={'img'}
+          className="w-full h-full object-cover transition-transform duration-300"
+        />
         )}
       </div>
     </div>

@@ -51,7 +51,7 @@ const RightPanel = ({ selectedTemplate, handleUpdateTemplate, handleDeleteTempla
     return (
         <div className="overflow-y-auto w-3/5 p-6 bg-white shadow-md border-l border-gray-200">
             <HeaderComponent
-                title={data.title}
+                data={data}
                 isEditMode={isEditMode}
                 onEdit={() => setIsEditMode(true)}
                 onCancel={handleCancel}
