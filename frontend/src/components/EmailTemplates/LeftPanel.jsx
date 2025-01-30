@@ -13,7 +13,7 @@ const LeftPanel = ({ setSelectedTemplate, setHandleTemplate, templates }) => {
 
     const downloadTemplatesAsPDF = async () => {
       try {
-        const response = await fetch("http://localhost:5000/templates/templates-grouped");
+        const response = await fetch("https://marketing-dashboard-8274.onrender.com/templates/templates-grouped");
         const groupedTemplates = await response.json();
     
         const doc = new jsPDF();

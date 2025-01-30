@@ -11,7 +11,7 @@ const CampaignManagement = () => {
   const [selectedProduct, setSelectedProduct] = useState();
 
   const refetchBanners = () => {
-    axios.get('http://localhost:5000/banners')
+    axios.get('https://marketing-dashboard-8274.onrender.com/banners')
       .then(response => {
         setBanners(response.data);
       })
@@ -44,7 +44,7 @@ const CampaignManagement = () => {
     };
   
     // Send the payload as JSON
-    axios.post('http://localhost:5000/banners', payload, {
+    axios.post('https://marketing-dashboard-8274.onrender.com/banners', payload, {
       headers: {
         'Content-Type': 'application/json', // Specify JSON format
       },
@@ -60,7 +60,7 @@ const CampaignManagement = () => {
 
   const handleDeleteBanner = (bannerId) => {
     console.log('handle delte banner FE, bannerId: ',bannerId)
-    axios.delete(`http://localhost:5000/banners/${bannerId}`)
+    axios.delete(`https://marketing-dashboard-8274.onrender.com/banners/${bannerId}`)
       .then(() => {
         // Update the state to remove the deleted banner
         setBanners(prevBanners => prevBanners.filter(banner => banner._id !== bannerId));
@@ -88,7 +88,7 @@ const handleUpdateBanner = (bannerId, updatedFields) => {
     }
   })
 
-  axios.put(`http://localhost:5000/banners/${bannerId}`, formData, {
+  axios.put(`https://marketing-dashboard-8274.onrender.com/banners/${bannerId}`, formData, {
     headers: {
       'Content-Type': 'multipart/form-data'
     }
