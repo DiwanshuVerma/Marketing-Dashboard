@@ -49,7 +49,7 @@ const RestaurantMenu = ({ SelectedRestaurant }) => {
   const displayedCategories = restaurant ? restaurant.categories : getMergedCategories();
 
   return (
-    <div className="w-full max-w-3xl mx-auto p-6 bg-white shadow-md rounded-lg overflow-y-auto h-[490px]">
+    <div className="w-[70%] mt-14 max-w-3xl mx-auto p-6 bg-white shadow-md rounded-lg overflow-y-auto h-[490px]">
       <div className="flex justify-between items-center mb-4 border-b pb-2">
         <h2 className="text-2xl font-bold text-center">
           {restaurant ? `${restaurant.name} - Menu` : "Apply Offer on Menus"}
@@ -75,13 +75,13 @@ const RestaurantMenu = ({ SelectedRestaurant }) => {
                   <input type="checkbox" className="mr-2" />
                   {subcategory.name}
                 </label>
-                <ul className="text-gray-700 mt-2 ml-6 flex flex-col gap-2">
+                <ul className="text-gray-700 mt-2 flex flex-col gap-2">
                   {subcategory.items.map((item, itemIndex) => (
-                    <>
+                    <div className="flex gap-2">
                   <input type="checkbox" className="" />
 
                     <li key={itemIndex}>{item}</li>
-                    </>
+                    </div>
                   ))}
                 </ul>
               </div>

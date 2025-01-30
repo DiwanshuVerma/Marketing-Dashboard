@@ -7,9 +7,10 @@ const Restaurant = ({ onSelect }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedId, setSelectedId] = useState(null); // Track selected row by ID
   const restaurants = dummy.restaurants
+  const [selectedType, setSelectedType] = useState('Restaurants');
 
   // Filter restaurants based on search term
-  const filteredTemplates = restaurants
+  const filteredRestaurants = restaurants
     .filter((template) =>
       template.name.toLowerCase().includes(searchTerm.toLowerCase())
     )
@@ -29,8 +30,33 @@ const Restaurant = ({ onSelect }) => {
     console.log("Cross clicked");
   };
 
+
+
+  const handleTypeChange = (type) => {
+    setSelectedType(type);
+  };
+
+  // Filter templates based on the selected type
+  const filteredTypes = restaurants.filter((template) => template.type === selectedType);
+
   return (
-    <div className="overflow-y-auto w-[40%] ">
+    <div className="overflow-y-auto w-[30%] ">
+      <div className="flex gap-2 mb-4">
+        <button
+          onClick={() => handleTypeChange('Restaurants')}
+          className={`text-xl p-1 border-b-[3px] font-semibold text-gray-700 ${selectedType === 'Restaurants' ? 'border-red-600' : 'border-transparent'
+            }`}
+        >
+          Restaurants
+        </button>
+        <button
+          onClick={() => handleTypeChange('Tiffin Services')}
+          className={`text-xl p-1 border-b-[3px] font-semibold text-gray-700 ${selectedType === 'Tiffin Services' ? 'border-red-600' : 'border-transparent'
+            }`}
+        >
+          Tiffin Services
+        </button>
+      </div>
       <input
         type="text"
         placeholder="Search restaurant..."
@@ -39,9 +65,9 @@ const Restaurant = ({ onSelect }) => {
         className="mb-4 p-2 border border-gray-300 rounded w-full"
       />
 
-      {filteredTemplates.length > 0 ? (
+      {filteredRestaurants.length > 0 ? (
         <div className="space-y-2">
-          {filteredTemplates.map((restaurant, index) => (
+          {filteredRestaurants.map((restaurant, index) => (
             <div
               key={restaurant.id}
               className={`p-3 border flex justify-between rounded-lg cursor-pointer hover:shadow-sm ${selectedId === restaurant.id ? "bg-gray-200" : "bg-white"
@@ -53,15 +79,15 @@ const Restaurant = ({ onSelect }) => {
               </div>
 
               {selectedId === restaurant.id && (
-               <button
-                onClick={onCancel}
-                className="text-gray-500 hover:text-red-500"
-                title="Cancel"
-              >
-                <FiX size={20} />
-              </button> 
+                <button
+                  onClick={onCancel}
+                  className="text-gray-500 hover:text-red-500"
+                  title="Cancel"
+                >
+                  <FiX size={20} />
+                </button>
               )}
-              
+
             </div>
           ))}
         </div>

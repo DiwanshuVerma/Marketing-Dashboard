@@ -66,7 +66,7 @@ function Offers() {
       animate={{ opacity: 1 }}
       transition={{ duration: 0.4 }}
     >
-      <div className="p-6 max-w-[1300px] mx-auto">
+      <div className="">
         <motion.h1
           className="text-3xl font-bold text-gray-800 mb-6"
           initial={{ opacity: 0, y: -20 }}
