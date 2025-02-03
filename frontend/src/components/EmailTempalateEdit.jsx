@@ -14,8 +14,8 @@ const EmailTemplateEdit = ({ template, onChange, isEditMode }) => {
 
   const [status, setStatus] = useState(template.status || "Inactive");
   const [isActive, setIsActive] = useState(template.status === "Active");
-  
-  const [type, setType] = useState(template.type || 'Select Type');
+
+  const [type, setType] = useState(template.type || 'Select Reciever');
   const [event, setEvent] = useState(template.event || 'Select Event');
 
   useEffect(() => {
@@ -25,7 +25,7 @@ const EmailTemplateEdit = ({ template, onChange, isEditMode }) => {
     setDescription(template.description || "");
 
     setStatus(template.status || "Inactive");
-    setType(template.type || "Select type")
+    setType(template.type || "Select Reciever")
     setEvent(template.event || 'Select Event')
   }, [template]);
 
@@ -127,11 +127,11 @@ const EmailTemplateEdit = ({ template, onChange, isEditMode }) => {
   // absolute left-0 w-40 p-2 bg-black text-white text-sm rounded-md shadow-lg opacity-0 group-hover:opacity-100 transition-opacity
   return (
     <div className="bg-white flex flex-col gap-6 mt-4 p-4">
-      <div className="flex gap-6">
+      <div className="flex gap-12">
         <div className="">
           <div className="flex items-center mb-2 gap-2">
-            <label className="text-gray-700 text-sm font-bold">Type</label>
-            <InfoTooltip text="Select the type of template (e.g., User or Restaurant)." />
+            <label className="text-gray-700 text-sm font-bold">Reciever</label>
+            <InfoTooltip text="Select the reciever of template (e.g., User or Restaurant)." />
           </div>
 
           <TypeSelector type={type} onChange={handleType} isEditMode={isEditMode} />
@@ -152,6 +152,28 @@ const EmailTemplateEdit = ({ template, onChange, isEditMode }) => {
 
           <EventSelector isEditMode={isEditMode} event={event} onChange={handleEvent} />
 
+        </div>
+
+        <div>
+
+          <div className="flex items-center gap-2">
+            <label className="block text-gray-700 text-sm font-bold " htmlFor="status">
+              Status
+            </label>
+            <InfoTooltip text="Toggle the status between Active and Inactive." />
+          </div>
+
+          <div className="flex gap-4 items-center mt-3">
+            <button
+              id="status"
+              className={`${isActive ? "text-green-500" : "text-gray-500"}`}
+              onClick={Status}
+              disabled={!isEditMode}
+            >
+              {isActive ? <FaToggleOn size={30} /> : <FaToggleOff size={30} />}
+            </button>
+            <p className={`${status === "Active" ? "text-green-500" : "text-red-500"}`}>{status}</p>
+          </div>
         </div>
       </div>
 
@@ -212,27 +234,7 @@ const EmailTemplateEdit = ({ template, onChange, isEditMode }) => {
         />
       </div>
 
-      <div className="mt-4">
 
-        <div className="flex items-center mb-2 gap-2">
-          <label className="block text-gray-700 text-sm font-bold " htmlFor="status">
-            Status
-          </label>
-          <InfoTooltip text="Toggle the status between Active and Inactive." />
-        </div>
-
-        <div className="flex gap-4 items-center">
-          <button
-            id="status"
-            className={`${isActive ? "text-green-500" : "text-gray-500"}`}
-            onClick={Status}
-            disabled={!isEditMode}
-          >
-            {isActive ? <FaToggleOn size={30} /> : <FaToggleOff size={30} />}
-          </button>
-          <p className={`${status === "Active" ? "text-green-500" : "text-red-500"}`}>{status}</p>
-        </div>
-      </div>
     </div>
   );
 };

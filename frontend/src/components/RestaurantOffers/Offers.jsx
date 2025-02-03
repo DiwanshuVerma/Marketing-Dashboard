@@ -82,7 +82,7 @@ function Offers() {
          */}
         <div className="flex flex-col md:flex-row gap-8 md:items-stretch">
           {/* Left Column: Create Offer Form */}
-          <div className="flex-1 bg-white shadow-sm rounded p-4 h-fit">
+          <div className="flex-1 bg-white shadow-sm rounded py-6 px-4 h-fit">
             <CreateOfferForm
               onSave={handleAddOffer}
               categories={uniqueCategories}

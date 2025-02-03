@@ -4,11 +4,14 @@ import { PencilIcon, TrashIcon } from "@heroicons/react/24/solid";
 
 function OffersList({ offers, onRemoveOffer, onEditOffer }) {
   const [editingOfferId, setEditingOfferId] = useState(null);
+  const [statusFilter, setStatusFilter] = useState("All");
+  const [typeFilter, setTypeFilter] = useState("All");
   const [formData, setFormData] = useState({
     name: "",
     discount: "",
     startDate: "",
     endDate: "",
+    type: "",
   });
 
   const getOfferStatus = (offer) => {
@@ -21,6 +24,13 @@ function OffersList({ offers, onRemoveOffer, onEditOffer }) {
     return "Active";
   };
 
+  const filteredOffers = offers.filter((offer) => {
+    const status = getOfferStatus(offer);
+    const statusMatch = statusFilter === "All" || status === statusFilter;
+    const typeMatch = typeFilter === "All" || offer.type === typeFilter;
+    return statusMatch && typeMatch;
+  });
+
   const handleEditClick = (offer) => {
     setEditingOfferId(offer.id);
     setFormData({
@@ -28,6 +38,7 @@ function OffersList({ offers, onRemoveOffer, onEditOffer }) {
       discount: offer.discount,
       startDate: offer.startDate,
       endDate: offer.endDate,
+      type: offer.type,
     });
   };
 
@@ -47,15 +58,44 @@ function OffersList({ offers, onRemoveOffer, onEditOffer }) {
 
   return (
     <div className="mt-8">
-      <h2 className="text-xl font-bold mb-2 text-gray-800">Current Offers</h2>
+      <div className="flex justify-between">
+        <h2 className="text-xl font-bold mb-6 text-gray-800">Current Offers</h2>
+        <div className="">
+          <select
+            value={statusFilter}
+            onChange={(e) => setStatusFilter(e.target.value)}
+            className="p-1 rounded mr-2"
+          >
+            <option value="All">All</option>
+            <option value="Active">Active</option>
+            <option value="Upcoming">Upcoming</option>
+            <option value="Expired">Expired</option>
+          </select>
 
-      {offers.length === 0 ? (
-        <p className="text-gray-500">No offers created yet.</p>
+          <select
+            value={typeFilter}
+            onChange={(e) => setTypeFilter(e.target.value)}
+            className="p-1 rounded"
+          >
+            <option value="All">All</option>
+            <option value="Restaurant-wide">Restaurant-wide</option>
+            <option value="Dish-specific">Dish-specific</option>
+            <option value="Menu-wide discounts">Menu-wide discounts</option>
+          </select>
+        </div>
+      </div>
+      
+      {filteredOffers.length === 0 ? (
+        offers.length === 0 ? (
+          <p className="text-gray-500">No offers created yet.</p>
+        ) : (
+          <p className="text-gray-500">No offers match the current filters.</p>
+        )
       ) : (
         <div className="overflow-auto max-h-96">
           <ul className="space-y-3 pr-2">
             <AnimatePresence>
-              {offers.map((offer) => {
+              {filteredOffers.map((offer) => {
                 const status = getOfferStatus(offer);
                 const isEditing = editingOfferId === offer.id;
 
@@ -115,7 +155,6 @@ function OffersList({ offers, onRemoveOffer, onEditOffer }) {
                             </select>
                           </div>
                         </div>
-
                         <div className="mt-2 flex justify-between gap-2">
                           <div className="flex-1">
                             <label className="block text-xs font-semibold text-gray-600">
@@ -133,22 +172,20 @@ function OffersList({ offers, onRemoveOffer, onEditOffer }) {
 
                           <div className="flex-1">
                             <label className="block text-xs font-semibold text-gray-600">
-                              Start Date
+                              End Date
                             </label>
                             <input
                               type="date"
-                              name="startDate"
-                              value={formData.startDate}
+                              name="endDate"
+                              value={formData.endDate}
                               onChange={handleChange}
                               className="border px-2 py-1 rounded w-full focus:outline-none
                                        focus:border-blue-400 text-sm"
                             />
                           </div>
                         </div>
-
-
-                        {/* Save / Cancel */}
-                        <div className="flex items-center gap-3 mt-2">
+                         {/* Save / Cancel */}
+                         <div className="flex items-center gap-3 mt-2">
                           <button
                             className="bg-blue-600 text-white px-3 py-1 rounded text-sm
                                      hover:bg-blue-700"

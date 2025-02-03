@@ -1,9 +1,9 @@
 // src/pages/Offers.jsx
 import React, { useState, useEffect } from "react";
 import Offers from "../components/RestaurantOffers/Offers";
-import Restaurant from "../components/RestaurantOffers/Restaurents";
+import RestaurantsList from "../components/RestaurantOffers/RestaurantsList";
 import RestaurantMenu from "../components/RestaurantOffers/RestaurantMenu";
-import dummy from "../data/dummy"
+import { motion } from "framer-motion";
 
 function RestaurantOffers() {
   const [selectedRestaurant, setSelectedRestaurant] = useState(null)
@@ -16,9 +16,17 @@ function RestaurantOffers() {
     <div className="p-6 max-w-[1300px] mx-auto">
       <Offers />
 
-      {/* <h1 className="text-3xl font-bold text-gray-800 mt-12 mb-6">Restaurants</h1> */}
-      <div className="flex mt-14">
-        <Restaurant onSelect={setSelectedRestaurant} />
+      <motion.h1
+          className="text-3xl font-bold text-gray-800 mb-6 mt-12"
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2, duration: 0.5 }}
+        >
+          Apply Offers
+        </motion.h1>
+
+      <div className="flex bg-white p-4 relative rounded shadow-sm h-[550px]">
+        <RestaurantsList onSelect={setSelectedRestaurant} />
         <RestaurantMenu SelectedRestaurant={selectedRestaurant} />
       </div>
 

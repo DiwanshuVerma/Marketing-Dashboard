@@ -24,11 +24,11 @@ const CampaignManagement = () => {
     refetchBanners(); // Initial fetch when the component mounts
   }, []);
 
-  // useEffect(() => {
-  //   if (banners.length > 0) {
-      // setSelectedProduct(banners[0]); // Set the first banner as the default
-    // }
-  // }, [banners]);
+  useEffect(() => {
+    if (banners.length > 0) {
+      setSelectedProduct(banners[0]); // Set the first banner as the default
+    }
+  }, [banners]);
 
 
   const handleCreateBanner = (newBanner, imageFile) => {

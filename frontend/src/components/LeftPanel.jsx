@@ -102,7 +102,7 @@ const CreateCampaignModal = ({ onClose, onCreate }) => {
 
 
 const LeftPanel = ({ onProductSelect, products = [], onCreateBanner }) => {
-  const [openCategories, setOpenCategories] = useState({});
+  const [openCategories, setOpenCategories] = useState(campaigns[0]);
   const [isPopUpOpen, setIsPopUpOpen] = useState(false);
   const [popUpTitle, setPopUpTitle] = useState("");
 
@@ -165,8 +165,9 @@ const LeftPanel = ({ onProductSelect, products = [], onCreateBanner }) => {
                           setIsPopUpOpen(true);
                           setPopUpTitle(catg.name);
                         }}
+                       title="Add banner"
                       >
-                        +Add
+                        <FiPlusCircle size={18}/>
                       </button>
                     )}
                   </div>

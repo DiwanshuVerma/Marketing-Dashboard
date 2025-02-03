@@ -113,11 +113,9 @@ export default function Sidebar() {
             )}
           </li>
           <li>{navItem("/RestaurantOffers", HiOutlineGift, "Restaurant Offers")}</li>
+
           <li>
-            {navItem("/outlet-settings", HiOutlineCog, "Outlet settings")}
-          </li>
-          <li>
-            {navItem("/outlet-info", HiOutlineInformationCircle, "Outlet info")}
+            {navItem("/profile-management", HiOutlineCog, "Profile Management")}
           </li>
           <li>{navItem("/help", HiOutlineQuestionMarkCircle, "Help")}</li>
         </ul>

@@ -1,7 +1,7 @@
 import React from "react";
 import { outletData } from "../data/dummy"; // Update the path as necessary
 
-export default function OutletInfo() {
+export default function ProfileManagement() {
   return (
     <div className="p-4 space-y-6 relative">
       <h1 className="text-2xl font-bold text-gray-700">Outlet Info</h1>
