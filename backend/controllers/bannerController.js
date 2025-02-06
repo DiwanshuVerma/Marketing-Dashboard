@@ -1,6 +1,4 @@
 const Banner = require('../models/Banner');
-const fs = require('fs');
-const path = require('path');
 const uploadToCloudinary = require('../utils/cloudinary');
 const cloudinary = require("cloudinary").v2;
 
@@ -27,7 +25,6 @@ exports.createBanner = async (req, res) => {
     });
     
     await banner.save();
-    console.log('creating banner inside controller')
 
     res.status(201).json({ message: 'Banner created successfully', banner });
   } catch (err) {
@@ -89,10 +86,14 @@ exports.updateBanner = async (req, res) => {
       banner.status = 'Inactive'; // Default to Inactive if dates are missing
     }
 
-    // Handle image upload if provided
-    if (req.file) {
-      console.log('Handling file upload in update banner API');
-      banner.photo = await uploadToCloudinary(req.file.path, 'banners');
+    // Handle images upload if provided
+    if (req.files) {
+      if (req.files.photoWeb) {
+        banner.photoWeb = await uploadToCloudinary(req.files.photoWeb[0].path, 'banners');
+      }
+      if (req.files.photoApp) {
+        banner.photoApp = await uploadToCloudinary(req.files.photoApp[0].path, 'banners');
+      }
     }
 
     await banner.save();
@@ -110,18 +111,15 @@ exports.deleteBanner = async (req, res) => {
     const banner = await Banner.findById(req.params.id);
     if (!banner) return res.status(404).send('Banner not found');
 
-    const imageUrl = banner.photo
-    if (imageUrl) {
+    // Delete images if they exist
+    if (banner.photoWeb) {
+      const publicIdWeb = banner.photoWeb.split('/').pop().split('.')[0]; // Extract public ID
+      await cloudinary.uploader.destroy(`banners/${publicIdWeb}`);
+    }
 
-      console.log('deleting banner photo')
-
-      const publicIdMatch = imageUrl.match(/\/([^/]+)\.[a-z]+$/i);
-      if (publicIdMatch) {
-        const publicId = `banners/${publicIdMatch[1]}`; // Prepend folder name if applicable
-
-        // Delete the image from Cloudinary
-        await cloudinary.uploader.destroy(publicId);
-      }
+    if (banner.photoApp) {
+      const publicIdApp = banner.photoApp.split('/').pop().split('.')[0]; // Extract public ID
+      await cloudinary.uploader.destroy(`banners/${publicIdApp}`);
     }
 
     await Banner.findByIdAndDelete(id)

@@ -6,13 +6,8 @@ const PORT = process.env.PORT || 5000;
 
 connectDB();
 
-
-
-// * Reload the website every 5 minutes. Replace with your Render URL.
-
-
 const url = `https://marketing-dashboard-8274.onrender.com`
-const interval = 30000; // Interval in milliseconds (30 seconds)
+const interval = 20000; // Interval in milliseconds (20 seconds)
 
 async function reloadWebsite() {
   await fetch(url)
@@ -24,9 +19,7 @@ async function reloadWebsite() {
     });
 }
 
-
 setInterval(reloadWebsite, interval);
-
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);

@@ -1,7 +1,6 @@
-const fs = require('fs');
 const multer = require('multer');
+const fs = require('fs');
 
-// Ensure the directory exists
 const createTempDir = () => {
   const dir = 'temp/';
   if (!fs.existsSync(dir)) {
@@ -9,18 +8,23 @@ const createTempDir = () => {
   }
 };
 
-// Configure multer to store files temporarily
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    createTempDir(); // Create directory if it doesn't exist
-    console.log('inside multer middleware')
-    cb(null, 'temp/'); // Temporary storage folder
+    createTempDir();
+    cb(null, 'temp/');
   },
   filename: (req, file, cb) => {
     cb(null, `${Date.now()}-${file.originalname}`);
   }
 });
 
-const upload = multer({ storage });
+// Configure multer to accept two file fields (photoWeb & photoApp)
+const upload = multer({
+  storage,
+  limits: { fileSize: 5 * 1024 * 1024 }, // 5MB limit
+}).fields([
+  { name: 'photoWeb', maxCount: 1 },
+  { name: 'photoApp', maxCount: 1 }
+]);
 
-module.exports = upload;
+module.exports = upload; // Directly exporting the configured multer instance

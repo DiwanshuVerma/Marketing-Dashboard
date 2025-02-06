@@ -8,9 +8,9 @@ router.get('/', getAllBanners);
 router.post('/', createBanner);
 router.get('/res/active', getActiveResBanners);
 router.get('/dis/active', getActiveDisBanners);
-router.put('/:id', upload.single('photo'), updateBanner, async (req, res) => {
-    console.log('File received:', req.file);
-})
+
+router.put('/:id', upload, updateBanner);
+
 router.delete('/:id', deleteBanner);
 
 module.exports = router;
