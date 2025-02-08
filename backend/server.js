@@ -2,46 +2,38 @@ require('dotenv').config();
 const app = require('./app');
 const connectDB = require('./config/db');
 const cron = require("node-cron");
-const Offer = require('./models/Offers')
+const Offer = require('./models/Offers');
+const Banner = require('./models/Banners'); // Ensure correct path
 const PORT = process.env.PORT || 5000;
 
 connectDB();
 
-const url = `https://marketing-dashboard-8274.onrender.com`
-const interval = 20000; // Interval in milliseconds (20 seconds)
+const url = `https://marketing-dashboard-8274.onrender.com`;
+const interval = 20000; // 20 seconds
 
 async function reloadWebsite() {
-  await fetch(url)
-    .then(response => {
-      console.log(`Reloaded at ${new Date().toISOString()}: Status Code ${response.status}`);
-    })
-    .catch(error => {
-      console.error(`Error reloading at ${new Date().toISOString()}:`, error.message);
-    });
+  try {
+    const response = await fetch(url);
+    console.log(`Reloaded at ${new Date().toISOString()}: Status Code ${response.status}`);
+  } catch (error) {
+    console.error(`Error reloading at ${new Date().toISOString()}:`, error.message);
+  }
 }
 
 setInterval(reloadWebsite, interval);
 
-
 // Function to update offer statuses
 const updateOfferStatuses = async () => {
   try {
-    const nowUTC = new Date(new Date().getTime() - new Date().getTimezoneOffset() * 60000);
+    const nowUTC = new Date();
+    nowUTC.setMinutes(nowUTC.getMinutes() - nowUTC.getTimezoneOffset());
 
+    await Offer.updateMany({ startDate: { $gt: nowUTC } }, { $set: { status: "Upcoming" } });
     await Offer.updateMany(
-      { startDate: { $gt: nowUTC } }, // Future start dates
-      { $set: { status: "Upcoming" } }
-    );
-
-    await Offer.updateMany(
-      { startDate: { $lte: nowUTC }, endDate: { $gte: nowUTC } }, // Ongoing offers
+      { startDate: { $lte: nowUTC }, endDate: { $gte: nowUTC } },
       { $set: { status: "Active" } }
     );
-
-    await Offer.updateMany(
-      { endDate: { $lt: nowUTC } }, // Past end dates
-      { $set: { status: "Expired" } }
-    );
+    await Offer.updateMany({ endDate: { $lt: nowUTC } }, { $set: { status: "Expired" } });
 
     console.log("Offer statuses updated!");
   } catch (error) {
@@ -49,24 +41,18 @@ const updateOfferStatuses = async () => {
   }
 };
 
+// Function to update banner statuses
 const updateBannerStatuses = async () => {
   try {
-    const nowUTC = new Date(new Date().getTime() - new Date().getTimezoneOffset() * 60000);
+    const nowUTC = new Date();
+    nowUTC.setMinutes(nowUTC.getMinutes() - nowUTC.getTimezoneOffset());
 
+    await Banner.updateMany({ startDate: { $gt: nowUTC } }, { $set: { status: "Upcoming" } });
     await Banner.updateMany(
-      { startDate: { $gt: nowUTC } }, // Future banners
-      { $set: { status: "Upcoming" } }
-    );
-
-    await Banner.updateMany(
-      { startDate: { $lte: nowUTC }, endDate: { $gte: nowUTC } }, // Active banners
+      { startDate: { $lte: nowUTC }, endDate: { $gte: nowUTC } },
       { $set: { status: "Active" } }
     );
-
-    await Banner.updateMany(
-      { endDate: { $lt: nowUTC } }, // Expired banners
-      { $set: { status: "Inactive" } }
-    );
+    await Banner.updateMany({ endDate: { $lt: nowUTC } }, { $set: { status: "Inactive" } });
 
     console.log("Banner statuses updated!");
   } catch (error) {
@@ -74,12 +60,12 @@ const updateBannerStatuses = async () => {
   }
 };
 
-// Schedule the job to run every minute
-cron.schedule("* * * * *", updateBannerStatuses);
-
-// Schedule the job to run every minute
-cron.schedule("* * * * *", updateOfferStatuses);
-
+// Run both status updates together every minute
+cron.schedule("* * * * *", async () => {
+  console.log("Running scheduled status updates...");
+  await updateOfferStatuses();
+  await updateBannerStatuses();
+});
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
