@@ -6,8 +6,7 @@ const router = express.Router();
 
 router.get('/', getAllBanners);
 router.post('/', createBanner);
-router.get('/res/active', getActiveResBanners);
-router.get('/dis/active', getActiveDisBanners);
+router.get('/active', getActiveResBanners);
 
 router.put('/:id', upload, updateBanner);
 

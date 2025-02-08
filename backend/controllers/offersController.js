@@ -39,17 +39,30 @@ exports.createOffer = async (req, res) => {
 }
 
 exports.updateOffer = async (req, res) => {
-    const {id} = req.params
-    const updatedData = req.body
-    try{
-        const UpdatedOffer = await Offer.findByIdAndUpdate(id, updatedData, {new: true })
-        if(!UpdatedOffer) return res.json({message: "Offer not found"})
+    const { id } = req.params;
+    const { startDate, endDate, ...rest } = req.body;
 
-        res.json({message:"Offer updated"})
-    } catch(err) {
-        res.status(500).json({message: "failed to update offer", error: err.message})
+    try {
+        const nowUTC = new Date(new Date().getTime() - new Date().getTimezoneOffset() * 60000);
+        let status = "Upcoming";
+
+        if (nowUTC > new Date(endDate)) status = "Expired";
+        else if (nowUTC >= new Date(startDate) && nowUTC <= new Date(endDate)) status = "Active";
+
+        const updatedOffer = await Offer.findByIdAndUpdate(
+            id,
+            { ...rest, startDate, endDate, status },
+            { new: true }
+        );
+
+        if (!updatedOffer) return res.status(404).json({ message: "Offer not found" });
+
+        res.json({ message: "Offer updated", updatedOffer });
+    } catch (err) {
+        res.status(500).json({ message: "Failed to update offer", error: err.message });
     }
-}
+};
+
 
 exports.deleteOffer = async (req, res) => {
     const {id} = req.params

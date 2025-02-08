@@ -16,10 +16,9 @@ exports.getAllBanners = async (req, res) => {
 // Create a new banner
 exports.createBanner = async (req, res) => {
   try {
-    const { title, type, isDefault, status } = req.body;
+    const { title, isDefault, status } = req.body;
     const banner = new Banner({
       title,
-      type,
       isDefault: isDefault || false,
       status: status || 'Inactive',
     });
@@ -32,72 +31,51 @@ exports.createBanner = async (req, res) => {
   }
 };
 
-
-// Update a banner
+// update a banner
 exports.updateBanner = async (req, res) => {
   try {
-    const { title, type, status, isDefault, startDate, endDate } = req.body;
+    const { title, isDefault, pages, startDate, endDate } = req.body;
     const banner = await Banner.findById(req.params.id);
 
-    if (!banner) return res.status(404).send('Banner not found');
-    console.log('Updating banner');
+    if (!banner) return res.status(404).send("Banner not found");
 
-    // Update the fields only if they are provided
+    console.log("Updating banner");
+
+    // Update fields only if provided
     if (title) banner.title = title;
-    if (type) banner.type = type;
-    if (status) banner.status = status;
-    if (typeof isDefault !== 'undefined') banner.isDefault = isDefault;
-
-    // Add 5:30 hours to the received local time to convert it to UTC
-    const addOffset = (dateString) => {
-      if (!dateString) return null;
-      const date = new Date(dateString);
-      date.setHours(date.getHours() + 5); // Add 5 hours
-      date.setMinutes(date.getMinutes() + 30); // Add 30 minutes
-      return date;
-    };
-
-    if (startDate) {
-      banner.startDate = addOffset(startDate); // Convert local time to UTC
-    }
-    if (endDate) {
-      banner.endDate = addOffset(endDate); // Convert local time to UTC
-    }
+    if (typeof isDefault !== "undefined") banner.isDefault = isDefault;
+    if (pages) banner.pages = pages;
+    if (startDate) banner.startDate = startDate;
+    if (endDate) banner.endDate = endDate;
 
     // Validate dates
     if (banner.startDate && banner.endDate && banner.startDate >= banner.endDate) {
-      return res.status(400).send('End date must be after start date');
+      return res.status(400).send("End date must be after start date");
     }
 
-    // Calculate and update the status dynamically using UTC
-    const nowUTC = new Date(); // Current UTC time
-    const startUTC = banner.startDate ? new Date(banner.startDate) : null;
-    const endUTC = banner.endDate ? new Date(banner.endDate) : null;
+    // Update status based on current time
+    const nowUTC = new Date(new Date().getTime() - new Date().getTimezoneOffset() * 60000);
 
-    if (startUTC && endUTC) {
-      if (nowUTC >= startUTC && nowUTC <= endUTC) {
-        banner.status = 'Active';
-      } else if (nowUTC < startUTC) {
-        banner.status = 'Upcoming';
-      } else {
-        banner.status = 'Inactive';
-      }
-    } else {
-      banner.status = 'Inactive'; // Default to Inactive if dates are missing
+    if (nowUTC < new Date(banner.startDate)) {
+      banner.status = "Upcoming";
+    } else if (nowUTC >= new Date(banner.startDate) && nowUTC <= new Date(banner.endDate)) {
+      banner.status = "Active";
+    } else if (nowUTC > new Date(banner.endDate)) {
+      banner.status = "Inactive";
     }
 
     // Handle images upload if provided
     if (req.files) {
       if (req.files.photoWeb) {
-        banner.photoWeb = await uploadToCloudinary(req.files.photoWeb[0].path, 'banners');
+        banner.photoWeb = await uploadToCloudinary(req.files.photoWeb[0].path, "banners");
       }
       if (req.files.photoApp) {
-        banner.photoApp = await uploadToCloudinary(req.files.photoApp[0].path, 'banners');
+        banner.photoApp = await uploadToCloudinary(req.files.photoApp[0].path, "banners");
       }
     }
 
     await banner.save();
-    res.json({ message: 'Banner updated successfully', banner });
+    res.json({ message: "Banner updated successfully", banner });
   } catch (err) {
     res.status(400).send(err.message);
   }
@@ -134,16 +112,7 @@ exports.deleteBanner = async (req, res) => {
 // return active banners
 exports.getActiveResBanners = async (req, res) => {
   try {
-    const activeBanners = await Banner.find({ status: 'Active', type: 'Restaurant Discount' });
-    res.status(200).json(activeBanners);
-  } catch (err) {
-    res.status(500).json({ error: 'Error fetching active banners', message: err.message });
-  }
-};
-// return active banners
-exports.getActiveDisBanners = async (req, res) => {
-  try {
-    const activeBanners = await Banner.find({ status: 'Active', type: 'Dishes Discount' });
+    const activeBanners = await Banner.find({ status: 'Active' });
     res.status(200).json(activeBanners);
   } catch (err) {
     res.status(500).json({ error: 'Error fetching active banners', message: err.message });

@@ -13,7 +13,7 @@ app.use(cors());
 app.use('/uploads', express.static('uploads'));
 app.use('/banners', bannerRoutes);
 
-//tempplates
+//templates
 app.use('/templates', templateRoutes);
 
 //offers
