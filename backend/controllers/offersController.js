@@ -41,27 +41,59 @@ exports.createOffer = async (req, res) => {
 exports.updateOffer = async (req, res) => {
     const { id } = req.params;
     const { startDate, endDate, ...rest } = req.body;
-
+  
     try {
-        const nowUTC = new Date(new Date().getTime() - new Date().getTimezoneOffset() * 60000);
-        let status = "Upcoming";
-
-        if (nowUTC > new Date(endDate)) status = "Expired";
-        else if (nowUTC >= new Date(startDate) && nowUTC <= new Date(endDate)) status = "Active";
-
-        const updatedOffer = await Offer.findByIdAndUpdate(
-            id,
-            { ...rest, startDate, endDate, status },
-            { new: true }
-        );
-
-        if (!updatedOffer) return res.status(404).json({ message: "Offer not found" });
-
-        res.json({ message: "Offer updated", updatedOffer });
+      let updateData = { ...rest };
+  
+      // If both dates are provided, use them directly.
+      if (startDate && endDate) {
+        updateData.startDate = startDate;
+        updateData.endDate = endDate;
+        const now = new Date();
+        const start = new Date(startDate);
+        const end = new Date(endDate);
+        if (now < start) {
+          updateData.status = "Upcoming";
+        } else if (now > end) {
+          updateData.status = "Expired";
+        } else {
+          updateData.status = "Active";
+        }
+      }
+      // If only one date is provided, merge with existing offer values.
+      else if (startDate || endDate) {
+        // Fetch the existing offer to get missing date(s)
+        const existingOffer = await Offer.findById(id);
+        if (!existingOffer) {
+          return res.status(404).json({ message: "Offer not found" });
+        }
+        // Determine new start and end dates
+        const newStart = startDate ? new Date(startDate) : new Date(existingOffer.startDate);
+        const newEnd = endDate ? new Date(endDate) : new Date(existingOffer.endDate);
+        updateData.startDate = startDate ? startDate : existingOffer.startDate;
+        updateData.endDate = endDate ? endDate : existingOffer.endDate;
+  
+        const now = new Date();
+        if (now < newStart) {
+          updateData.status = "Upcoming";
+        } else if (now > newEnd) {
+          updateData.status = "Expired";
+        } else {
+          updateData.status = "Active";
+        }
+      }
+      // If no date fields are being updated, no need to change the status.
+      // The updateData will be processed by the pre-update hook if both dates are present.
+  
+      const updatedOffer = await Offer.findByIdAndUpdate(id, updateData, { new: true });
+      if (!updatedOffer) return res.status(404).json({ message: "Offer not found" });
+  
+      res.json({ message: "Offer updated", updatedOffer });
     } catch (err) {
-        res.status(500).json({ message: "Failed to update offer", error: err.message });
+      res.status(500).json({ message: "Failed to update offer", error: err.message });
     }
-};
+  };
+
 
 
 exports.deleteOffer = async (req, res) => {

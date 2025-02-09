@@ -12,14 +12,33 @@ const bannerSchema = new mongoose.Schema({
 });
 
 bannerSchema.pre("save", function (next) {
-  const nowUTC = new Date(new Date().getTime() - new Date().getTimezoneOffset() * 60000);
+  const now = new Date(); // Current time in UTC
 
-  if (nowUTC < this.startDate) {
+  if (now < this.startDate) {
     this.status = "Upcoming";
-  } else if (nowUTC >= this.startDate && nowUTC <= this.endDate) {
-    this.status = "Active";
-  } else {
+  } else if (now > this.endDate) {
     this.status = "Inactive";
+  } else {
+    this.status = "Active";
+  }
+  next();
+});
+
+// Pre-findOneAndUpdate hook: recalc status if both dates are updated
+bannerSchema.pre("findOneAndUpdate", function (next) {
+  const update = this.getUpdate();
+  // Only recalc status if both startDate and endDate are present in the update.
+  if (update.startDate && update.endDate) {
+    const now = new Date();
+    const start = new Date(update.startDate);
+    const end = new Date(update.endDate);
+    if (now < start) {
+      update.status = "Upcoming";
+    } else if (now > end) {
+      update.status = "Inactive";
+    } else {
+      update.status = "Active";
+    }
   }
   next();
 });

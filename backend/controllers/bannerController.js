@@ -54,7 +54,7 @@ exports.updateBanner = async (req, res) => {
     }
 
     // Update status based on current time
-    const nowUTC = new Date(new Date().getTime() - new Date().getTimezoneOffset() * 60000);
+    const nowUTC = new Date();
 
     if (nowUTC < new Date(banner.startDate)) {
       banner.status = "Upcoming";
