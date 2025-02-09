@@ -1,48 +1,48 @@
 // src/components/Offers/CreateOfferForm.jsx
 import React, { useState } from "react";
 import { motion } from "framer-motion";
-import Dates from "../RightPanel/Dates";
+// import Dates from "../RightPanel/Dates";
 
-function CreateOfferForm({ onSave, categories, subCategories, items }) {
+function CreateOfferForm({ onSave }) {
   const [name, setName] = useState("");
-  const [code, setCode] = useState("");
   const [discount, setDiscount] = useState("");
-  const [scope, setScope] = useState("item");
-  const [categoryName, setCategoryName] = useState("");
-  const [subCategoryName, setSubCategoryName] = useState("");
-  const [selectedItemIds, setSelectedItemIds] = useState([]);
+  const [type, setType] = useState("Restaurant-wide")
+  const [startDate, setStartDate] = useState("")
+  const [endDate, setEndDate] = useState("")
 
   const handleSave = () => {
+    const adjustToUTC = (dateString) => {
+      if (!dateString) return "";
+      // new Date(dateString) treats the string as local time.
+      // toISOString() returns the UTC time.
+      return new Date(dateString).toISOString();
+    };
+
     const newOffer = {
-      id: Date.now().toString(),
       name,
-      code,
       discount,
-      scope,
-      categoryName: scope === "category" ? categoryName : null,
-      subCategoryName: scope === "subcategory" ? subCategoryName : null,
-      itemIds: scope === "item" ? selectedItemIds : [],
-      active: true,
-      validUntil: "2024-12-31",
+      type,
+      startDate: adjustToUTC(startDate), // converts local -> UTC
+      endDate: adjustToUTC(endDate)
     };
     onSave(newOffer);
 
     // Reset form
     setName("");
-    setCode("");
     setDiscount("");
-    setScope("item");
-    setCategoryName("");
-    setSubCategoryName("");
-    setSelectedItemIds([]);
+    setType(""),
+    setStartDate(""),
+    setEndDate("")
   };
 
-  const handleItemCheckbox = (e) => {
-    const val = parseInt(e.target.value, 10);
-    setSelectedItemIds((prev) =>
-      prev.includes(val) ? prev.filter((id) => id !== val) : [...prev, val]
-    );
+  const handleStartDate = (event) => {
+    setStartDate(event.target.value);
   };
+  
+  const handleEndDate = (event) => {
+    setEndDate(event.target.value);
+  };
+  
 
   return (
     <motion.div
@@ -81,8 +81,8 @@ function CreateOfferForm({ onSave, categories, subCategories, items }) {
           <label className="block font-semibold text-gray-700 ">Offer Type</label>
           <select
             className="border bg-gray-100 w-full px-3 py-1.5 rounded focus:outline-none focus:border-blue-400"
-            value={scope}
-            onChange={(e) => setScope(e.target.value)}
+            value={type}
+            onChange={(e) => setType(e.target.value)}
           >
             <option value="Restaurant-wide">Restaurant-wide</option>
             <option value="Dish-specific">Dish-specific</option>
@@ -90,72 +90,31 @@ function CreateOfferForm({ onSave, categories, subCategories, items }) {
           </select>
         </div>
 
+        <div className="grid grid-cols-2 gap-4">
+        {/* Start Date */}
         <div>
-          <Dates />
+          <label className="block font-semibold text-gray-700">Start Date</label>
+          <input
+            type="datetime-local"
+            value={startDate ? startDate.slice(0, 16) : ""}
+            className="w-full border px-3 py-2 rounded-md bg-gray-100"
+            onChange={handleStartDate}
+          />
         </div>
-        {/* 
 
-        {scope === "category" && (
-          <div>
-            <label className="block font-semibold text-gray-700">
-              Select Category
-            </label>
-            <select
-              className="border w-full px-3 py-1.5 rounded focus:outline-none focus:border-blue-400"
-              value={categoryName}
-              onChange={(e) => setCategoryName(e.target.value)}
-            >
-              <option value="">-- Select --</option>
-              {categories.map((c) => (
-                <option key={c} value={c}>
-                  {c}
-                </option>
-              ))}
-            </select>
-          </div>
-        )}
-
-        {scope === "subcategory" && (
-          <div>
-            <label className="block font-semibold text-gray-700">
-              Select Subcategory
-            </label>
-            <select
-              className="border w-full px-3 py-1.5 rounded focus:outline-none focus:border-blue-400"
-              value={subCategoryName}
-              onChange={(e) => setSubCategoryName(e.target.value)}
-            >
-              <option value="">-- Select --</option>
-              {subCategories.map((sub) => (
-                <option key={sub} value={sub}>
-                  {sub}
-                </option>
-              ))}
-            </select>
-          </div>
-        )}
-
-        {scope === "item" && (
-          <div>
-            <label className="block font-semibold text-gray-700">
-              Select Items
-            </label>
-            <div className="max-h-32 overflow-auto border p-2 rounded">
-              {items.map((itm) => (
-                <label key={itm.id} className="block text-gray-600">
-                  <input
-                    type="checkbox"
-                    value={itm.id}
-                    checked={selectedItemIds.includes(itm.id)}
-                    onChange={handleItemCheckbox}
-                  />
-                  <span className="ml-2">{itm.name}</span>
-                </label>
-              ))}
-            </div>
-          </div>
-        )} */}
-
+        {/* End Date */}
+        <div>
+          <label className="block font-semibold text-gray-700">End Date</label>
+          <input
+            type="datetime-local"
+            value={endDate ? endDate.slice(0, 16) : ""}
+            className="w-full border px-3 py-2 rounded-md bg-gray-100"
+            onChange={handleEndDate}
+            min={startDate} // Ensure end date is after start date
+          />
+        </div>
+      </div>
+ 
         <button
           className="mt-2 bg-blue-600 text-white px-5 py-2 rounded hover:bg-blue-700 transition-colors"
           onClick={handleSave}

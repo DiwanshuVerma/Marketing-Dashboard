@@ -12,6 +12,7 @@ import RestaurantOffers from "./pages/RestaurantOffers";
 import ProfileManagement from "./pages/ProfileManagement";
 import Help from "./pages/Help";
 import EmailTempalateEdit from "./components/EmailTempalateEdit";
+import { OffersProvider } from "./context/OffersContext";
 
 export default function App() {
   return (
@@ -23,7 +24,11 @@ export default function App() {
         <Route path='/email-tempalate-edit' element={<EmailTempalateEdit />} />
 
         <Route path="/CMS" element={<TaxesAndCharges />} />
-        <Route path="/RestaurantOffers" element={<RestaurantOffers />} />
+        <Route path="/RestaurantOffers" element={
+          <OffersProvider>
+            <RestaurantOffers />
+          </OffersProvider>
+        } />
         <Route path="/profile-management" element={<ProfileManagement />} />
         <Route path="/help" element={<Help />} />
         {/* If you need more pages, add them here */}

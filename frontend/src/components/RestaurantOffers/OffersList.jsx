@@ -1,44 +1,45 @@
-import React, { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { useState, useEffect } from "react";
+import { AnimatePresence, motion } from "framer-motion";
 import { PencilIcon, TrashIcon } from "@heroicons/react/24/solid";
 
-function OffersList({ offers, onRemoveOffer, onEditOffer }) {
+function OffersList({ offers, handleDeleteOffer, onEditOffer }) {
   const [editingOfferId, setEditingOfferId] = useState(null);
   const [statusFilter, setStatusFilter] = useState("All");
   const [typeFilter, setTypeFilter] = useState("All");
-  const [formData, setFormData] = useState({
-    name: "",
-    discount: "",
-    startDate: "",
-    endDate: "",
-    type: "",
-  });
 
-  const getOfferStatus = (offer) => {
-    const today = new Date();
-    const start = new Date(offer.startDate);
-    const end = new Date(offer.endDate);
-
-    if (today < start) return "Upcoming";
-    if (today > end) return "Expired";
-    return "Active";
-  };
 
   const filteredOffers = offers.filter((offer) => {
-    const status = getOfferStatus(offer);
+    const status = offer.status;
     const statusMatch = statusFilter === "All" || status === statusFilter;
     const typeMatch = typeFilter === "All" || offer.type === typeFilter;
     return statusMatch && typeMatch;
   });
 
+  const [formData, setFormData] = useState({
+    name: "",
+    discount: "",
+    type: "Restaurant-wide",
+    startDate: "",
+    endDate: "",
+  });
+
+  // convert UTC ISO string dates into date time local
+  const toLocalInputValue = (utcDateString) => {
+    if (!utcDateString) return "";
+    const date = new Date(utcDateString);
+    // Adjust so that the ISO string reflects local time.
+    date.setMinutes(date.getMinutes() - date.getTimezoneOffset());
+    return date.toISOString().slice(0, 16);
+  };
+
   const handleEditClick = (offer) => {
-    setEditingOfferId(offer.id);
+    setEditingOfferId(offer._id);
     setFormData({
       name: offer.name,
       discount: offer.discount,
-      startDate: offer.startDate,
-      endDate: offer.endDate,
-      type: offer.type,
+      // Convert UTC date string to local date string for display:
+      startDate: toLocalInputValue(offer.startDate),
+      endDate: toLocalInputValue(offer.endDate),
     });
   };
 
@@ -48,9 +49,22 @@ function OffersList({ offers, onRemoveOffer, onEditOffer }) {
   };
 
   const handleSave = (offerId) => {
-    onEditOffer(offerId, formData);
-    setEditingOfferId(null);
+  const adjustToUTC = (dateString) => {
+    if (!dateString) return "";
+    // new Date(dateString) interprets the string as local time.
+    return new Date(dateString).toISOString();
   };
+
+  const updatedOffer = {
+    ...formData,
+    startDate: adjustToUTC(formData.startDate),
+    endDate: adjustToUTC(formData.endDate),
+  };
+
+  onEditOffer(offerId, updatedOffer);
+  setEditingOfferId(null);
+};
+
 
   const handleCancelEdit = () => {
     setEditingOfferId(null);
@@ -84,7 +98,7 @@ function OffersList({ offers, onRemoveOffer, onEditOffer }) {
           </select>
         </div>
       </div>
-      
+
       {filteredOffers.length === 0 ? (
         offers.length === 0 ? (
           <p className="text-gray-500">No offers created yet.</p>
@@ -96,12 +110,12 @@ function OffersList({ offers, onRemoveOffer, onEditOffer }) {
           <ul className="space-y-3 pr-2">
             <AnimatePresence>
               {filteredOffers.map((offer) => {
-                const status = getOfferStatus(offer);
-                const isEditing = editingOfferId === offer.id;
+                const status = offer.status;
+                const isEditing = editingOfferId === offer._id;
 
                 return (
                   <motion.li
-                    key={offer.id}
+                    key={offer._id}
                     className="relative rounded p-4 flex flex-col border border-gray-100 shadow-sm hover:shadow-md transition-shadow"
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
@@ -147,7 +161,8 @@ function OffersList({ offers, onRemoveOffer, onEditOffer }) {
                             <select className="border px-2 py-1 rounded w-full focus:outline-none
                                        focus:border-blue-400 bg-transparent"
                               id="type" value={formData.type}
-                              onChange={handleChange}>
+                              name="type"
+                              onChange={handleChange} >
 
                               <option value="Restaurant-wide">Restaurant-wide</option>
                               <option value="Dish-specific">Dish-specific</option>
@@ -161,7 +176,7 @@ function OffersList({ offers, onRemoveOffer, onEditOffer }) {
                               Start Date
                             </label>
                             <input
-                              type="date"
+                              type="datetime-local"
                               name="startDate"
                               value={formData.startDate}
                               onChange={handleChange}
@@ -175,7 +190,7 @@ function OffersList({ offers, onRemoveOffer, onEditOffer }) {
                               End Date
                             </label>
                             <input
-                              type="date"
+                              type="datetime-local"
                               name="endDate"
                               value={formData.endDate}
                               onChange={handleChange}
@@ -184,12 +199,12 @@ function OffersList({ offers, onRemoveOffer, onEditOffer }) {
                             />
                           </div>
                         </div>
-                         {/* Save / Cancel */}
-                         <div className="flex items-center gap-3 mt-2">
+                        {/* Save / Cancel */}
+                        <div className="flex items-center gap-3 mt-2">
                           <button
                             className="bg-blue-600 text-white px-3 py-1 rounded text-sm
                                      hover:bg-blue-700"
-                            onClick={() => handleSave(offer.id)}
+                            onClick={() => handleSave(offer._id)}
                           >
                             Save
                           </button>
@@ -218,7 +233,7 @@ function OffersList({ offers, onRemoveOffer, onEditOffer }) {
                             />
                             <TrashIcon
                               className="h-5 w-5 text-red-500 cursor-pointer hover:text-red-700"
-                              onClick={() => onRemoveOffer(offer.id)}
+                              onClick={() => handleDeleteOffer(offer._id)}
                             />
                           </div>
                         </div>
@@ -227,8 +242,14 @@ function OffersList({ offers, onRemoveOffer, onEditOffer }) {
                           <p>Type: <span className="font-semibold text-gray-600">{offer.type}</span></p>
 
                           <div className="flex gap-8">
-                            <p>Start Date: <span className="font-semibold text-gray-600">{offer.startDate}</span></p>
-                            <p>End Date: <span className="font-semibold text-gray-600">{offer.endDate}</span></p>
+                            <p>Start Date:
+                              <input type="datetime-local" name="" id=""
+                                value={toLocalInputValue(offer.startDate)} className="mt-1 bg-transparent font-semibold text-gray-600" disabled />
+                            </p>
+                            <p>End Date:
+                              <input type="datetime-local" name="" id=""
+                                value={toLocalInputValue(offer.endDate)} className="mt-1 bg-transparent font-semibold text-gray-600" disabled />
+                            </p>
                           </div>
                         </div>
                       </>

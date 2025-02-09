@@ -59,7 +59,6 @@ const CampaignManagement = () => {
   
 
   const handleDeleteBanner = (bannerId) => {
-    console.log('handle delte banner FE, bannerId: ',bannerId)
     axios.delete(`https://marketing-dashboard-8274.onrender.com/banners/${bannerId}`)
       .then(() => {
         // Update the state to remove the deleted banner

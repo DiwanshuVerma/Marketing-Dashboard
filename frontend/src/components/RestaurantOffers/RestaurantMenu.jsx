@@ -1,9 +1,8 @@
 import { useEffect, useState } from "react";
-import { initialOffers } from "../../data/offersData";
 import dummy from "../../data/dummy";
 import RestaurantDetails from "./RestaurantDetails";
 
-const RestaurantMenu = ({ SelectedRestaurant = [] }) => { // Default to empty array
+const RestaurantMenu = ({ SelectedRestaurant = [], offersList }) => { // Default to empty array
   const [restaurant, setRestaurant] = useState({ categories: [] });
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [selectedItems, setSelectedItems] = useState({});
@@ -97,9 +96,11 @@ const RestaurantMenu = ({ SelectedRestaurant = [] }) => { // Default to empty ar
           <label htmlFor="offers" className="text-lg mr-3">Select Offer:</label>
           <select name="offers" id="offers" className="p-1 rounded">
             <option value="" className="text-center">--Select--</option>
-            {initialOffers.map((offer, offerIndex) => (
-              <option key={offerIndex} value={offer.name}>{offer.name}</option>
-            ))}
+            {offersList.map((offer, offerIndex) => 
+              (offer.status === "Active" || offer.status === "Upcoming") && (      // show only active and upcoming offers
+                <option key={offerIndex} value={offer.name}>{offer.name}</option>
+              )
+            )}
           </select>
         </div>
       </div>

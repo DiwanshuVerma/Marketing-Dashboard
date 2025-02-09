@@ -4,9 +4,11 @@ import Offers from "../components/RestaurantOffers/Offers";
 import RestaurantsList from "../components/RestaurantOffers/RestaurantsList";
 import RestaurantMenu from "../components/RestaurantOffers/RestaurantMenu";
 import { motion } from "framer-motion";
+import { useOffers } from "../context/OffersContext";
 
 function RestaurantOffers() {
   const [selectedRestaurant, setSelectedRestaurant] = useState(null)
+  const {offers} = useOffers()
 
   useEffect(() => {
     console.log("Selected Restaurant updated:", selectedRestaurant);
@@ -27,7 +29,7 @@ function RestaurantOffers() {
 
       <div className="flex bg-white p-4 relative rounded shadow-sm h-[550px]">
         <RestaurantsList onSelect={setSelectedRestaurant} />
-        <RestaurantMenu SelectedRestaurant={selectedRestaurant} />
+        <RestaurantMenu SelectedRestaurant={selectedRestaurant} offersList={offers} />
       </div>
 
     </div>
