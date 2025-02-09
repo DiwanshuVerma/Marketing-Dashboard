@@ -6,9 +6,8 @@ const Dates = ({ isEditMode, details, onChange }) => {
     if (!utcDate) return '';
     const localDate = new Date(utcDate);
     // Format the date as "YYYY-MM-DDTHH:mm" for datetime-local input
-    const offset = localDate.getTimezoneOffset() * 60000; // Offset in milliseconds
-    const localTime = new Date(localDate.getTime() - offset).toISOString().slice(0, 16);
-    return localTime;
+    localDate.setMinutes(localDate.getMinutes() - localDate.getTimezoneOffset());
+    return localDate.toISOString().slice(0, 16);
   };
 
   // State for start and end dates
@@ -42,15 +41,16 @@ const Dates = ({ isEditMode, details, onChange }) => {
 
   return (
     <div className="mb-8 mt-4">
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-2 gap-16">
         {/* Start Date */}
-        <div>
+        <div >
           <label className="block font-semibold text-gray-700">Start Date</label>
           <input
             type="datetime-local"
             value={startDate}
-            className="w-full border px-3 py-2 rounded-md bg-gray-100"
+            className="w-full border px-3 py-2 rounded-md"
             onChange={handleStartDate}
+            disabled={!isEditMode}
           />
         </div>
 
@@ -60,9 +60,10 @@ const Dates = ({ isEditMode, details, onChange }) => {
           <input
             type="datetime-local"
             value={endDate}
-            className="w-full border px-3 py-2 rounded-md bg-gray-100"
+            className="w-full border px-3 py-2 rounded-md "
             onChange={handleEndDate}
             min={startDate} // Ensure end date is after start date
+            disabled={!isEditMode}
           />
         </div>
       </div>

@@ -33,7 +33,7 @@ const types = [
           onClick={toggleDropdown}
           disabled={!isEditMode}
         >
-          <span className="ml-1 flex-grow text-left truncate text-red-500 ">
+          <span className="ml-1 flex-grow text-left truncate ">
           {selectedType ? selectedType : "Select Receiver"}
 
           </span>

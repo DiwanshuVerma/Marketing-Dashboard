@@ -13,17 +13,25 @@ import ProfileManagement from "./pages/ProfileManagement";
 import Help from "./pages/Help";
 import EmailTempalateEdit from "./components/EmailTempalateEdit";
 import { OffersProvider } from "./context/OffersContext";
+import { BannersProvider } from "./context/BannersContext";
 
 export default function App() {
   return (
     <Routes>
       <Route element={<DashboardLayout />}>
         <Route path="/" element={<DashboardHome />} />
-        <Route path="/campaign-management" element={<CampaignManagement />} />
+
+        <Route path="/campaign-management" element={
+          <BannersProvider>
+            <CampaignManagement />
+          </BannersProvider>
+        } />
+
         <Route path="/email-templates" element={<EmailTemplates />} />
         <Route path='/email-tempalate-edit' element={<EmailTempalateEdit />} />
 
         <Route path="/CMS" element={<TaxesAndCharges />} />
+
         <Route path="/RestaurantOffers" element={
           <OffersProvider>
             <RestaurantOffers />

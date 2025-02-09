@@ -1,15 +1,15 @@
 // src/components/RightPanel.jsx
 import React, { useState, useEffect } from "react";
 import HeaderComponent from "./RightPanel/HeaderComponent";
-import TypesComponent from "./RightPanel/TypesComponent";
 import Dates from "./RightPanel/Dates";
 import ImagesComponent from "./RightPanel/ImagesComponent";
 import ActionButtonsComponent from "./RightPanel/ActionButtonsComponent";
 import PagesComponent from "./RightPanel/PagesComponent";
-import axios from "axios";
+import { useBanners } from "../context/BannersContext";
 
+const RightPanel = () => {
+  const {selectedProduct, handleUpdateBanner, handleDeleteBanner} = useBanners()
 
-const RightPanel = ({ selectedProduct, handleUpdateBanner, handleDeleteBanner, onDuplicate, banners }) => {
   const [isEditMode, setIsEditMode] = useState(false);
   const [data, setData] = useState(selectedProduct || {});
   const [selectedPages, setSelectedPages] = useState(selectedProduct.pages || []);
@@ -17,8 +17,7 @@ const RightPanel = ({ selectedProduct, handleUpdateBanner, handleDeleteBanner, o
   useEffect(() => {
     if (selectedProduct) {
       setData({ ...selectedProduct });
-      console.log('slectd prodct: ', selectedProduct)
-      setSelectedPages(selectedProduct.pages || []); // Dummy for now
+      setSelectedPages(selectedProduct.pages || [])
     }
   }, [selectedProduct]);
 
@@ -32,7 +31,7 @@ const RightPanel = ({ selectedProduct, handleUpdateBanner, handleDeleteBanner, o
       ...data,
       pages: selectedPages
     };
-    console.log('handle save')
+    console.log('new date:', updatedFields.startDate)
     handleUpdateBanner(data._id, updatedFields);
     setIsEditMode(false);
   };
@@ -47,17 +46,6 @@ const RightPanel = ({ selectedProduct, handleUpdateBanner, handleDeleteBanner, o
     if (window.confirm("Are you sure you want to delete this item?")) {
       handleDeleteBanner(data._id);
     }
-  };
-
-  const handleDuplicate = () => {
-    const duplicatedItem = {
-      ...data,
-      id: Date.now(),
-      name: `${data.name} (Copy)`,
-    };
-    onDuplicate(duplicatedItem);
-    setData(duplicatedItem);
-    setIsEditMode(true);
   };
 
   if (!data || Object.keys(data).length === 0) {
@@ -79,28 +67,33 @@ const RightPanel = ({ selectedProduct, handleUpdateBanner, handleDeleteBanner, o
         onEdit={() => setIsEditMode(true)}
         onCancel={handleCancel}
         onDelete={handleDelete}
-        onDuplicate={handleDuplicate}
         onChange={handleFieldChange}
       />
 
-      {/* Banner Image */}
+      {/* Banner Images */}
 
       <ImagesComponent
+        type="Web"
         isEditMode={isEditMode}
-        image={data.photo} // Can be a URL (string) or a File object
+        image={data.photoWeb} // Separate state key for Web image
         onImageChange={(file) => {
           setData((prev) => ({
             ...prev,
-            'photo': file, // Store File object for FormData upload
+            photoWeb: file, // Store Web image separately
           }));
         }}
       />
 
-      {/* Types Dropdown */}
-      <TypesComponent
+      <ImagesComponent
+        type="App"
         isEditMode={isEditMode}
-        data={data}
-        onChange={handleFieldChange}
+        image={data.photoApp} // Separate state key for App image
+        onImageChange={(file) => {
+          setData((prev) => ({
+            ...prev,
+            photoApp: file, // Store App image separately
+          }));
+        }}
       />
 
       {/* Dates */}
