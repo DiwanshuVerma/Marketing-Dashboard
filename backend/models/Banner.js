@@ -7,6 +7,7 @@ const bannerSchema = new mongoose.Schema({
   photoWeb: { type: String },
   photoApp: { type: String },
   pages: {type: String},
+  cities: {type: String},
   startDate: { type: Date },
   endDate: { type: Date },
 });

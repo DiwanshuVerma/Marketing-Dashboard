@@ -8,7 +8,7 @@ const uploadToCloudinary = async (filePath, folder) => {
     fs.unlinkSync(filePath); // Delete the local file after uploading to Cloudinary
     return result.secure_url; // Return the uploaded image's URL
   } catch (error) {
-    throw new Error('Failed to upload to Cloudinary: ' + error.message);
+    throw new Error('Failed to upload to Cloudinary: ' + (error.message || error.error?.message || error));
   }
 };
 

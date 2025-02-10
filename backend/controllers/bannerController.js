@@ -35,7 +35,7 @@ exports.createBanner = async (req, res) => {
 exports.updateBanner = async (req, res) => {
   try {
     const { id } = req.params;
-    const { title, isDefault, pages, startDate, endDate } = req.body;
+    const { title, isDefault, pages, cities, startDate, endDate } = req.body;
     
     // Find the banner document
     const banner = await Banner.findById(id);
@@ -47,6 +47,7 @@ exports.updateBanner = async (req, res) => {
     if (title) banner.title = title;
     if (typeof isDefault !== "undefined") banner.isDefault = isDefault;
     if (pages) banner.pages = pages;
+    if (cities) banner.cities = cities;
     
     // Update the date fields if provided.
     // (This assignment is optional because we update them again below if needed.)
@@ -92,6 +93,7 @@ exports.updateBanner = async (req, res) => {
 
     // Handle image uploads if provided
     if (req.files) {
+      console.log('updating banner, file is present')
       if (req.files.photoWeb) {
         banner.photoWeb = await uploadToCloudinary(req.files.photoWeb[0].path, "banners");
       }
@@ -102,6 +104,7 @@ exports.updateBanner = async (req, res) => {
 
     await banner.save();
     res.json({ message: "Banner updated successfully", banner });
+    console.log('error inside upda: ')
   } catch (err) {
     res.status(400).send(err.message);
   }
