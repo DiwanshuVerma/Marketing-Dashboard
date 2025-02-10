@@ -12,17 +12,23 @@ const bannerSchema = new mongoose.Schema({
 });
 
 bannerSchema.pre("save", function (next) {
-  const now = new Date(); // Current time in UTC
-
-  if (now < this.startDate) {
-    this.status = "Upcoming";
-  } else if (now > this.endDate) {
-    this.status = "Inactive";
+  // Only recalc status if both startDate and endDate are provided.
+  if (this.startDate && this.endDate) {
+    const now = new Date();
+    if (now < this.startDate) {
+      this.status = "Upcoming";
+    } else if (now > this.endDate) {
+      this.status = "Inactive";
+    } else {
+      this.status = "Active";
+    }
   } else {
-    this.status = "Active";
+    // If dates are not provided, ensure the status is Inactive.
+    this.status = "Inactive";
   }
   next();
 });
+
 
 // Pre-findOneAndUpdate hook: recalc status if both dates are updated
 bannerSchema.pre("findOneAndUpdate", function (next) {
