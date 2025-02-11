@@ -10,7 +10,6 @@ const CampaignManagement = () => {
 
   return (  
     <div className="flex flex-col h-full">
-      <TopBar title="Campaigns" placeholder="Search campaigns, types"/>
       <div className="flex flex-1 overflow-hidden">
         <LeftPanel />
         {selectedProduct && (

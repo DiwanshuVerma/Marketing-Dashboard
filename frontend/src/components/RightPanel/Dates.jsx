@@ -17,7 +17,7 @@ const Dates = ({ isEditMode, details, onChange }) => {
   useEffect(() => {
     setStartDate(details?.startDate ? formatToLocalTime(details?.startDate) : '');
     setEndDate(details?.endDate ? formatToLocalTime(details?.endDate) : '');
-  }, [details, isEditMode]);
+  }, [details]);
 
   const handleStartDate = (e) => {
     const newDate = e.target.value;

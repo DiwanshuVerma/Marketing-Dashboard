@@ -24,15 +24,25 @@ const campaigns = [
 ];
 
 
-const CreateCampaignModal = ({ onClose, onCreate }) => {
+const CreateCampaignModal = ({ onClose, onCreate, defaultOrNot }) => {
   const [name, setName] = useState("");
-  const [status, setStatus] = useState("Inactive");
+  const [status, setStatus] = useState(defaultOrNot ? "Active" : "Inactive")
+  const [isDefault, setIsDefault] = useState(defaultOrNot || false)
+
+
+  useEffect(() => {
+    setIsDefault(defaultOrNot || false)
+    setStatus(defaultOrNot ? "Active" : "Inactive")
+    console.log(isDefault)
+  }, [defaultOrNot])
+
 
   const handleCreate = async () => {
     const newBanner = {
       title: name,
       status,
-      isDefault: false
+      isDefault: isDefault
+      
     }
     onCreate(newBanner)
     onClose()
@@ -74,12 +84,12 @@ const CreateCampaignModal = ({ onClose, onCreate }) => {
 
 
 const LeftPanel = () => {
-  const {banners, selectedProduct, setSelectedProduct, handleCreateBanner} = useBanners()
+  const { banners = [], selectedProduct, setSelectedProduct, handleCreateBanner } = useBanners()
 
   const [openCategories, setOpenCategories] = useState({});
   const [isPopUpOpen, setIsPopUpOpen] = useState(false);
-  const [popUpTitle, setPopUpTitle] = useState("");
-  
+  let [defaultOrNot, setDefaultOrNot] = useState(false)
+
   // This state holds the status filter for each category by name.
   const [statusFilters, setStatusFilters] = useState({});
 
@@ -121,29 +131,28 @@ const LeftPanel = () => {
     return [];
   };
 
+
   return (
     <div className="w-2/5 bg-gray-50 border-r border-gray-200 p-4 flex flex-col justify-between overflow-y-auto custom-scrollbar">
       <div>
         <h2 className="text-xl font-semibold mb-4 text-gray-700">Campaigns</h2>
         {campaigns.map((campaign) => (
-          <div key={campaign.name} className="mb-4">
+          <div key={campaign.name} className="mb-4" >
             <div
               onClick={() => toggleCategory(campaign.name)}
               className="flex justify-between items-center cursor-pointer mb-2 py-2 px-3 bg-white rounded-md shadow-sm hover:bg-gray-100 transition-all duration-300"
             >
               <h3 className="font-medium text-gray-700">{campaign.name}</h3>
               <FiChevronDown
-                className={`text-gray-500 transition-transform duration-300 ${
-                  openCategories[campaign.name] ? "rotate-180" : ""
-                }`}
+                className={`text-gray-500 transition-transform duration-300 ${openCategories[campaign.name] ? "rotate-180" : ""
+                  }`}
               />
             </div>
 
             {campaign.categories && (
               <div
-                className={`overflow-hidden transition-all duration-500 ${
-                  openCategories[campaign.name] ? "max-h-96 opacity-100" : "max-h-0 opacity-0"
-                }`}
+                className={`overflow-hidden transition-all duration-500 ${openCategories[campaign.name] ? "max-h-96 opacity-100 mb-6" : "max-h-0 opacity-0"
+                  }`}
               >
                 {campaign.categories.map((catg) => {
                   // Get the banners for this category
@@ -165,42 +174,42 @@ const LeftPanel = () => {
                           className="text-blue-400"
                           onClick={() => {
                             setIsPopUpOpen(true);
-                            setPopUpTitle(catg.name);
+                            { catg.name === 'Default Banners' ? setDefaultOrNot(true) : setDefaultOrNot(false) }
+
                           }}
-                          title="Add banner"
+                          title={`${catg.name === 'Default Banners' ? 'Add default banner' : 'Add banner'}`}
                         >
                           <FiPlus size={22} />
                         </button>
                       </div>
 
                       {/* Dropdown filter selector */}
-                      {catg.name !== "Default Banners" && 
-                      <div className="mb-2">
-                        <select
-                          className="border rounded p-1"
-                          value={currentFilter}
-                          onChange={(e) =>
-                            setStatusFilters((prev) => ({
-                              ...prev,
-                              [catg.name]: e.target.value,
-                            }))
-                          }
-                        >
-                          <option value="All">All</option>
-                          <option value="Active">Active</option>
-                          <option value="Upcoming">Upcoming</option>
-                          <option value="Inactive">Inactive</option>
-                        </select>
-                      </div>
+                      {catg.name !== "Default Banners" &&
+                        <div className="mb-2">
+                          <select
+                            className="border rounded p-1"
+                            value={currentFilter}
+                            onChange={(e) =>
+                              setStatusFilters((prev) => ({
+                                ...prev,
+                                [catg.name]: e.target.value,
+                              }))
+                            }
+                          >
+                            <option value="All">All</option>
+                            <option value="Active">Active</option>
+                            <option value="Upcoming">Upcoming</option>
+                            <option value="Inactive">Inactive</option>
+                          </select>
+                        </div>
                       }
 
                       {bannersForCatg.map((banner) => (
                         <div
                           key={banner._id}
                           onClick={() => handleBannerClick(banner)}
-                          className={`flex justify-between py-1 px-2 hover:bg-gray-200 cursor-pointer rounded-md transition-all duration-200 ${
-                            banner._id === selectedTemplateId ? "bg-gray-200" : ""
-                          }`}
+                          className={`flex justify-between py-1 px-2 hover:bg-gray-200 cursor-pointer rounded-md transition-all duration-200 ${banner._id === selectedTemplateId ? "bg-gray-200" : ""
+                            }`}
                         >
                           <div className="flex items-center gap-2">
                             <MdOutlineFiberManualRecord
@@ -208,8 +217,8 @@ const LeftPanel = () => {
                                 banner.status === "Active"
                                   ? "text-green-500"
                                   : banner.status === "Inactive"
-                                  ? "text-red-500"
-                                  : "text-yellow-500"
+                                    ? "text-red-500"
+                                    : "text-yellow-500"
                               }
                             />
                             <span>{banner.title}</span>
@@ -219,8 +228,8 @@ const LeftPanel = () => {
                               banner.status === "Active"
                                 ? "text-green-500 text-sm"
                                 : banner.status === "Inactive"
-                                ? "text-red-500 text-sm"
-                                : "text-yellow-500 text-sm"
+                                  ? "text-red-500 text-sm"
+                                  : "text-yellow-500 text-sm"
                             }
                           >
                             {banner.status}
@@ -240,12 +249,12 @@ const LeftPanel = () => {
         <CreateCampaignModal
           onClose={() => {
             setIsPopUpOpen(false);
-            setPopUpTitle("");
           }}
           onCreate={(newBanner) => {
             handleCreateBanner(newBanner);
             setIsPopUpOpen(false);
           }}
+          defaultOrNot={defaultOrNot}
         />
       )}
     </div>

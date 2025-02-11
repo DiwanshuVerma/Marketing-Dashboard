@@ -14,7 +14,7 @@ const PagesComponent = ({ isEditMode, selectedPages, onChange }) => {
     if (selectedPages.includes(page)) {
       onChange(selectedPages.filter((p) => p !== page));
     } else {
-      onChange([...selectedPages, page]);
+      onChange([...selectedPages, 'pages', page]);
     }
   };
 

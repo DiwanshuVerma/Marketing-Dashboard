@@ -6,10 +6,10 @@ const BannersContext = createContext()
 
 export const BannersProvider = ({children}) => {
     const [banners, setBanners] = useState([])
-    const [selectedProduct, setSelectedProduct] = useState();
-  
+    const [selectedProduct, setSelectedProduct] = useState()
+
     const refetchBanners = () => {
-      axios.get('https://marketing-dashboard-8274.onrender.com/banners')
+      axios.get('http://localhost:5000/banners')
         .then(response => {
           setBanners(response.data);
         })
@@ -46,7 +46,7 @@ export const BannersProvider = ({children}) => {
       };
     
       // Send the payload as JSON
-      axios.post('https://marketing-dashboard-8274.onrender.com/banners', payload, {
+      axios.post('http://localhost:5000/banners', payload, {
         headers: {
           'Content-Type': 'application/json', // Specify JSON format
         },
@@ -61,7 +61,7 @@ export const BannersProvider = ({children}) => {
     
   
     const handleDeleteBanner = (bannerId) => {
-      axios.delete(`https://marketing-dashboard-8274.onrender.com/banners/${bannerId}`)
+      axios.delete(`http://localhost:5000/banners/${bannerId}`)
         .then(() => {
           // Update the state to remove the deleted banner
           setBanners(prevBanners => prevBanners.filter(banner => banner._id !== bannerId));
@@ -89,12 +89,13 @@ export const BannersProvider = ({children}) => {
       }
     })
   
-    axios.put(`https://marketing-dashboard-8274.onrender.com/banners/${bannerId}`, formData, {
+    axios.put(`http://localhost:5000/banners/${bannerId}`, formData, {
       headers: {
         'Content-Type': 'multipart/form-data'
       }
     })
       .then(response => {
+
         // Update local state
         setBanners(prevBanners => 
           prevBanners.map(banner => 
@@ -105,6 +106,7 @@ export const BannersProvider = ({children}) => {
         if (selectedProduct && selectedProduct._id === bannerId) {
           setSelectedProduct(prev => ({ ...prev, ...updatedFields }));
         }
+        refetchBanners()
       })
       .catch(error => {
         console.error('Error updating banner:', error)

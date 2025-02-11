@@ -5,40 +5,43 @@ import Dates from "./RightPanel/Dates";
 import ImagesComponent from "./RightPanel/ImagesComponent";
 import ActionButtonsComponent from "./RightPanel/ActionButtonsComponent";
 import PagesComponent from "./RightPanel/PagesComponent";
+import CampaignCities from "./RightPanel/CampaignCities";
 import { useBanners } from "../context/BannersContext";
 
 const RightPanel = () => {
-  const {selectedProduct, handleUpdateBanner, handleDeleteBanner} = useBanners()
+  const { selectedProduct, handleUpdateBanner, handleDeleteBanner } = useBanners()
 
   const [isEditMode, setIsEditMode] = useState(false);
   const [data, setData] = useState(selectedProduct || {});
   const [selectedPages, setSelectedPages] = useState(selectedProduct.pages || []);
+  const [selectedCities, setSelectedCities] = useState(selectedProduct.cities || []);
 
   useEffect(() => {
     if (selectedProduct) {
       setData({ ...selectedProduct });
       setSelectedPages(selectedProduct.pages || [])
+      setSelectedCities(selectedProduct.cities || [])
     }
   }, [selectedProduct]);
 
   const handleFieldChange = (field, value) => {
-    console.log('handle field change')
     setData((prev) => ({ ...prev, [field]: value }));
   };
 
   const handleSave = () => {
     const updatedFields = {
       ...data,
-      pages: selectedPages
+      pages: selectedPages,
+      cities: selectedCities
     };
-    console.log('new date:', updatedFields.startDate)
     handleUpdateBanner(data._id, updatedFields);
     setIsEditMode(false);
   };
 
   const handleCancel = () => {
     setData({ ...selectedProduct });
-    setSelectedPages(selectedProduct.pages || []);
+    setSelectedPages(selectedProduct.pages || [])
+    setSelectedCities(selectedProduct.cities || [])
     setIsEditMode(false);
   };
 
@@ -104,12 +107,21 @@ const RightPanel = () => {
       />
 
 
-      {/* Pages Selection */}
-      <PagesComponent
-        isEditMode={isEditMode}
-        selectedPages={selectedPages}
-        onChange={setSelectedPages}
-      />
+      <div className="flex justify-between mr-36 max-h-72 overflow-hidden">
+        {/* Pages Selection */}
+        <PagesComponent
+          isEditMode={isEditMode}
+          selectedPages={selectedPages}
+          onChange={setSelectedPages}
+        />
+        <div className="overflow-auto">
+        <CampaignCities
+          isEditMode={isEditMode}
+          selectedCities={selectedCities}
+          onChange={setSelectedCities}
+        />
+        </div>
+      </div>
 
       {/* Save/Cancel */}
       {isEditMode && (
