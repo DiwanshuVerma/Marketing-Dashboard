@@ -23,10 +23,13 @@ bannerSchema.pre("save", function (next) {
     } else {
       this.status = "Active";
     }
-  } else {
+  } else if(this.status) {
     // If dates are not provided, ensure the status is Inactive.
-    this.status = "Inactive";
+    this.status
+  } else {
+    this.status = 'Inactive'
   }
+  console.log('status is: ', this.status)
   next();
 });
 
