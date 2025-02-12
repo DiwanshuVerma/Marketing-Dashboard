@@ -35,7 +35,7 @@ exports.createBanner = async (req, res) => {
 exports.updateBanner = async (req, res) => {
   try {
     const { id } = req.params;
-    const { title, isDefault, pages, cities, startDate, endDate } = req.body;
+    const { title, isDefault, pages, offer, cities, startDate, endDate } = req.body;
     
     // Find the banner document
     const banner = await Banner.findById(id);
@@ -48,6 +48,7 @@ exports.updateBanner = async (req, res) => {
     if (typeof isDefault !== "undefined") banner.isDefault = isDefault;
     if (pages) banner.pages = pages;
     if (cities) banner.cities = cities;
+    if (offer) banner.offer = offer;
     
     // Update the date fields if provided.
     // (This assignment is optional because we update them again below if needed.)
