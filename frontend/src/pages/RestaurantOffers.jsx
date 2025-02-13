@@ -10,10 +10,6 @@ function RestaurantOffers() {
   const [selectedRestaurant, setSelectedRestaurant] = useState(null)
   const {offers} = useOffers()
 
-  useEffect(() => {
-    console.log("Selected Restaurant updated:", selectedRestaurant);
-  }, [selectedRestaurant])
-
   return (
     <div className="p-6 max-w-[1300px] mx-auto">
       <Offers />

@@ -1,27 +1,39 @@
+import { useBanners } from "../../context/BannersContext";
 
-  // Sample data for demonstration
-  const stats = [
-    {
-      label: "Banners (All)",
-      value: 78,
-      bg: "bg-pink-600",
-    },
-    {
-      label: "Banner clicks",
-      value: 10023,
-      bg: "bg-blue-600",
-    },
-    {
-      label: "Restaurant Offers",
-      value: 11,
-      bg: "bg-green-600",
-    },
-  ];
+
+
+// Sample data for demonstration
+const stats = [
+  {
+    label: "Banners (All)",
+    value: 78,
+    bg: "bg-pink-600",
+  },
+  {
+    label: "Banner clicks",
+    value: 123,
+    bg: "bg-blue-600",
+  },
+  {
+    label: "Restaurant Offers",
+    value: 11,
+    bg: "bg-green-600",
+  },
+];
 
 
 const DashboardStats = () => {
-    return(
-        <div className="">
+  const { banners } = useBanners()
+
+  const calculateClicks = (banners) => {
+    return banners.reduce((total, banner) => total + (banner.clicks || 0), 0)
+  }
+
+  const totalClicks = calculateClicks(banners)
+  console.log(totalClicks)
+
+  return (
+    <div className="">
       {/* Stats Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {stats.map((stat) => (
@@ -33,7 +45,8 @@ const DashboardStats = () => {
               <span className="text-sm font-medium opacity-90">
                 {stat.label}
               </span>
-              <span className="text-xl font-bold mt-1">{stat.value}</span>
+              <span className="text-xl font-bold mt-1">{stat.label === 'Banner clicks' ? totalClicks : stat.value}
+              </span>
             </div>
             {/* Icon placeholder (replace with actual icons if you like) */}
             <svg
@@ -53,7 +66,7 @@ const DashboardStats = () => {
         ))}
       </div>
     </div>
-    )
+  )
 }
 
 export default DashboardStats;

@@ -87,6 +87,7 @@ function CreateOfferForm({ onSave }) {
             <option value="Restaurant-wide">Restaurant-wide</option>
             <option value="Dish-specific">Dish-specific</option>
             <option value="Menu-wide discounts">Menu-wide discounts</option>
+            <option value="Tiffin Services">Tiffin Services</option>
           </select>
         </div>
 

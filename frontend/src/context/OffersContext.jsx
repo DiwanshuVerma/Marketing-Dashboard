@@ -6,7 +6,7 @@ const OffersContext = createContext()
 export const OffersProvider = ({ children }) => {
 
     const [offers, setOffers] = useState([]);
-
+    
     const refetchOffers = () => {
         try {
             axios.get('http://localhost:5000/offers')

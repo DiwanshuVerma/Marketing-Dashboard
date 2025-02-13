@@ -23,7 +23,7 @@ export default function App() {
 
         <Route path="/campaign-management" element={
           <BannersProvider>
-            <CampaignManagement />
+              <CampaignManagement />
           </BannersProvider>
         } />
 

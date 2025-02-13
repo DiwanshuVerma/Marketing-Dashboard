@@ -7,6 +7,7 @@ import ActionButtonsComponent from "./RightPanel/ActionButtonsComponent";
 import PagesComponent from "./RightPanel/PagesComponent";
 import CampaignCities from "./RightPanel/CampaignCities";
 import { useBanners } from "../context/BannersContext";
+import { OffersProvider } from "../context/OffersContext";
 
 const RightPanel = () => {
   const { selectedProduct, handleUpdateBanner, handleDeleteBanner } = useBanners()
@@ -74,30 +75,32 @@ const RightPanel = () => {
       />
 
       {/* Banner Images */}
+      <OffersProvider>
+        <ImagesComponent
+          type="Web"
+          isEditMode={isEditMode}
+          image={data.photoWeb} // Separate state key for Web image
+          onImageChange={(file) => {
+            setData((prev) => ({
+              ...prev,
+              photoWeb: file, // Store Web image separately
+            }));
+          }}
+          onChange={handleFieldChange}
+        />
 
-      <ImagesComponent
-        type="Web"
-        isEditMode={isEditMode}
-        image={data.photoWeb} // Separate state key for Web image
-        onImageChange={(file) => {
-          setData((prev) => ({
-            ...prev,
-            photoWeb: file, // Store Web image separately
-          }));
-        }}
-      />
-
-      <ImagesComponent
-        type="App"
-        isEditMode={isEditMode}
-        image={data.photoApp} // Separate state key for App image
-        onImageChange={(file) => {
-          setData((prev) => ({
-            ...prev,
-            photoApp: file, // Store App image separately
-          }));
-        }}
-      />
+        <ImagesComponent
+          type="App"
+          isEditMode={isEditMode}
+          image={data.photoApp} // Separate state key for App image
+          onImageChange={(file) => {
+            setData((prev) => ({
+              ...prev,
+              photoApp: file, // Store App image separately
+            }));
+          }}
+        />
+      </OffersProvider>
 
       {/* Dates */}
       <Dates
@@ -115,11 +118,11 @@ const RightPanel = () => {
           onChange={setSelectedPages}
         />
         <div className="overflow-auto">
-        <CampaignCities
-          isEditMode={isEditMode}
-          selectedCities={selectedCities}
-          onChange={setSelectedCities}
-        />
+          <CampaignCities
+            isEditMode={isEditMode}
+            selectedCities={selectedCities}
+            onChange={setSelectedCities}
+          />
         </div>
       </div>
 

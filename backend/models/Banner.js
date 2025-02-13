@@ -11,6 +11,7 @@ const bannerSchema = new mongoose.Schema({
   cities: {type: String},
   startDate: { type: Date },
   endDate: { type: Date },
+  clicks: {type: Number}
 });
 
 bannerSchema.pre("save", function (next) {

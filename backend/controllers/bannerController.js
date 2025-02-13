@@ -149,3 +149,21 @@ exports.getActiveResBanners = async (req, res) => {
     res.status(500).json({ error: 'Error fetching active banners', message: err.message });
   }
 };
+
+
+// increase banner clicks count on click
+exports.clickCounts = async (req, res) => {
+  try{
+  const {_id} = req.params
+
+  const updatedBanner = await Banner.findByIdAndUpdate(
+    _id,
+    {$inc: {clicks: 1}},
+    { new: true }
+  )
+
+  res.status(200).json({Banner: updatedBanner.title, clicks: updatedBanner.clicks})
+} catch(err){
+  res.status(500).json({msg: "Error updating banner click count: ", error: err.message})
+}
+}

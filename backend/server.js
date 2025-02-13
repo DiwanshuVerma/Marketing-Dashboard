@@ -34,7 +34,7 @@ const updateOfferStatuses = async () => {
     await Offer.updateMany({ endDate: { $lt: now } }, { $set: { status: "Expired" } })
 
   } catch (error) {
-    console.error("Error updating offer statuses:", error);
+    console.error("Error updating offer statuses:", error.message);
   }
 };
 
@@ -51,7 +51,7 @@ const updateBannerStatuses = async () => {
     await Banner.updateMany({ endDate: { $lt: now } }, { $set: { status: "Inactive" } })
 
   } catch (error) {
-    console.error("Error updating banner statuses:", error);
+    console.error("Error updating banner statuses:", error.message);
   }
 };
 

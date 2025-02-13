@@ -12,10 +12,8 @@ const HeaderComponent = ({
   onChange
 }) => {
   const [editableTitle, setEditableTitle] = useState(data.title || 'Untitled');
-
   const [isDefault, setIsDefault] = useState(data.isDefault || false);
-  const [isActive, setIsActive] = useState(data.isDefault === 'Active');
-
+  
   useEffect(() => {
     setEditableTitle(data.title);
     setIsDefault(data.isDefault || false)
@@ -64,9 +62,11 @@ const HeaderComponent = ({
         <input value={data.title} placeholder="Untitled" readOnly className="outline-none text-2xl font-semibold text-gray-800" />
       )}
 
-      <div className="flex gap-3 flex-shrink-0">
+      <div className="flex gap-4">
 
+          {/* set default Banner */}
         {data.isDefault !== undefined && (
+
           <div className="flex items-center gap-2">
             <label
               className="block text-gray-700 text-sm font-bold"
@@ -116,54 +116,5 @@ const HeaderComponent = ({
     </div>
   );
 };
-
-
-// const HeaderComponent = ({
-//   title,
-//   isEditMode,
-//   onEdit,
-//   onCancel,
-//   onDelete,
-//   onDuplicate,
-// }) => {
-//   return (
-//     <div className="flex justify-between items-center mb-4 border-b pb-2">
-//       <h2 className="text-2xl font-semibold text-gray-800">{title}</h2>
-//       <div className="flex gap-3">
-//         <button
-//           onClick={onDelete}
-//           className="text-red-500 hover:text-red-700"
-//           title="Delete"
-//         >
-//           <FiTrash2 size={20} />
-//         </button>
-//         {/* <button
-//           onClick={onDuplicate}
-//           className="text-blue-500 hover:text-blue-700"
-//           title="Duplicate"
-//         >
-//           <FiCopy size={20} />
-//         </button> */}
-//         {!isEditMode ? (
-//           <button
-//             onClick={onEdit}
-//             className="text-gray-500 hover:text-blue-500"
-//             title="Edit"
-//           >
-//             <FiEdit size={20} />
-//           </button>
-//         ) : (
-//           <button
-//             onClick={onCancel}
-//             className="text-gray-500 hover:text-red-500"
-//             title="Cancel"
-//           >
-//             <FiX size={20} />
-//           </button>
-//         )}
-//       </div>
-//     </div>
-//   );
-// };
 
 export default HeaderComponent;
