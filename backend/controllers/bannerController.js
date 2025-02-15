@@ -1,6 +1,7 @@
 const Banner = require('../models/Banner');
 const uploadToCloudinary = require('../utils/cloudinary');
 const cloudinary = require("cloudinary").v2;
+const mongoose = require('mongoose')
 
 // Get all banners
 exports.getAllBanners = async (req, res) => {
@@ -22,7 +23,7 @@ exports.createBanner = async (req, res) => {
       isDefault: isDefault || false,
       status: status || 'Inactive',
     });
-    
+
     await banner.save();
 
     res.status(201).json({ message: 'Banner created successfully', banner });
@@ -36,7 +37,7 @@ exports.updateBanner = async (req, res) => {
   try {
     const { id } = req.params;
     const { title, isDefault, pages, offer, cities, startDate, endDate } = req.body;
-    
+
     // Find the banner document
     const banner = await Banner.findById(id);
     if (!banner) return res.status(404).send("Banner not found");
@@ -49,7 +50,7 @@ exports.updateBanner = async (req, res) => {
     if (pages) banner.pages = pages;
     if (cities) banner.cities = cities;
     if (offer) banner.offer = offer;
-    
+
     // Update the date fields if provided.
     // (This assignment is optional because we update them again below if needed.)
     if (startDate) banner.startDate = startDate;
@@ -115,7 +116,7 @@ exports.updateBanner = async (req, res) => {
 // to delete
 exports.deleteBanner = async (req, res) => {
   try {
-    const {id} = req.params
+    const { id } = req.params
 
     const banner = await Banner.findById(req.params.id);
     if (!banner) return res.status(404).send('Banner not found');
@@ -135,7 +136,7 @@ exports.deleteBanner = async (req, res) => {
 
     return res.status(204).json({ message: "Banner deleted successfully" });
   } catch (err) {
-    res.status(500).json({ message: "Error deleting banner", Error: err.message});
+    res.status(500).json({ message: "Error deleting banner", Error: err.message });
   }
 };
 
@@ -151,19 +152,94 @@ exports.getActiveResBanners = async (req, res) => {
 };
 
 
-// increase banner clicks count on click
+// POST: add a new click entry with the current date
 exports.clickCounts = async (req, res) => {
-  try{
-  const {_id} = req.params
+  try {
+    const { _id } = req.params;
 
-  const updatedBanner = await Banner.findByIdAndUpdate(
-    _id,
-    {$inc: {clicks: 1}},
-    { new: true }
-  )
+    // Add a new click entry with the current date
+    const updatedBanner = await Banner.findByIdAndUpdate(
+      _id,
+      { $push: { clicks: { date: new Date() } } }, // Push a new click object
+      { new: true }
+    );
 
-  res.status(200).json({Banner: updatedBanner.title, clicks: updatedBanner.clicks})
-} catch(err){
-  res.status(500).json({msg: "Error updating banner click count: ", error: err.message})
-}
-}
+    res.status(200).json({
+      Banner: updatedBanner.title,
+      totalClicks: updatedBanner.clicks.length, // Total clicks = length of the array
+    });
+  } catch (err) {
+    res.status(500).json({
+      msg: "Error updating banner click count: ",
+      error: err.message,
+    });
+  }
+};
+
+
+// filter clicks by Today, This Week, or This Month, use MongoDB aggregation
+
+// GET: get filtered clicks
+exports.getClicksByTimeframe = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { timeframe } = req.query;
+
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({ msg: "Invalid banner ID" });
+    }
+
+    const now = new Date();
+    const utcNow = new Date(now.toISOString().slice(0, -1)); // Workaround for UTC parsing
+    let startDate;
+
+    switch (timeframe) {
+      case "today":
+        startDate = new Date(utcNow);
+        startDate.setUTCHours(0, 0, 0, 0);
+        break;
+      case "week":
+        // Start on Monday
+        const day = utcNow.getUTCDay();
+        const diff = day === 0 ? 6 : day - 1;
+        startDate = new Date(utcNow);
+        startDate.setUTCDate(utcNow.getUTCDate() - diff);
+        startDate.setUTCHours(0, 0, 0, 0);
+        break;
+      case "month":
+        startDate = new Date(Date.UTC(utcNow.getUTCFullYear(), utcNow.getUTCMonth(), 1));
+        break;
+      default:
+        return res.status(400).json({ msg: "Invalid timeframe" });
+    }
+
+    const banner = await Banner.aggregate([
+      { $match: { _id: new mongoose.Types.ObjectId(id) } },
+      {
+        $project: {
+          totalClicks: { $size: "$clicks" },
+          filteredClicks: {
+            $size: {
+              $filter: {
+                input: "$clicks",
+                as: "click",
+                cond: { $gte: ["$$click.date", startDate] },
+              },
+            },
+          },
+        },
+      },
+    ]);
+
+    if (!banner.length) {
+      return res.status(404).json({ msg: "Banner not found" });
+    }
+
+    res.status(200).json({
+      totalClicks: banner[0].totalClicks,
+      timeframeClicks: banner[0].filteredClicks,
+    });
+  } catch (err) {
+    res.status(500).json({ msg: "Error fetching clicks", error: err.message });
+  }
+};
