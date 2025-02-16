@@ -9,7 +9,7 @@ const PORT = process.env.PORT || 5000;
 connectDB();
 
 const url = `https://marketing-dashboard-8274.onrender.com`;
-const interval = 20000; // 20 seconds
+const interval = 600000; // 10mins
 
 async function reloadWebsite() {
   try {
