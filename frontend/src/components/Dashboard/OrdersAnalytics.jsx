@@ -3,11 +3,13 @@ import { LineChart, Line, XAxis, YAxis, ResponsiveContainer, Tooltip, Legend, Ba
 import { FaChartLine } from "react-icons/fa";
 import { MdOutlineNavigateNext } from "react-icons/md";
 import { useOffers } from "../../context/OffersContext";
+import {useNavigate} from 'react-router-dom'
 
 export const OrdersAnalytics = () => {
     const [ordersTimeframe, setOrdersTimeframe] = useState("Today");
     const [ordersData, setOrdersData] = useState([]);
     const { offers } = useOffers()
+    const navigate = useNavigate()
 
     const generateOrdersData = (timeframe) => {
         const categories = ["Starters", "Main Course", "Combos", "Desserts"];
@@ -34,7 +36,7 @@ export const OrdersAnalytics = () => {
                             <ChartHeader
                                 title="Orders Analytics"
                                 description="Orders Overview during Active Offers"
-                                navigateTo="/restaurant-offers"
+                                navigateTo={() => navigate('/RestaurantOffers')}
                             />
         
                             <div className="flex justify-between items-center">
@@ -87,7 +89,7 @@ const ChartHeader = ({ title, description, navigateTo }) => (
         </div>
         <MdOutlineNavigateNext
             className="text-blue-600 cursor-pointer"
-            onClick={() => navigate(navigateTo)}
+            onClick={navigateTo}
             size={24}
         />
     </div>

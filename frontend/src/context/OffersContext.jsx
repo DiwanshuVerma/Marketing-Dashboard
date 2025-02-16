@@ -9,7 +9,7 @@ export const OffersProvider = ({ children }) => {
     
     const refetchOffers = () => {
         try {
-            axios.get('http://localhost:5000/offers')
+            axios.get('https://marketing-dashboard-2wfk.onrender.com/offers')
                 .then(response => {
                     setOffers(response.data);
                 })
@@ -28,7 +28,7 @@ export const OffersProvider = ({ children }) => {
     // Handlers
     const handleAddOffer = async (newOffer) => {
         try {
-            const response = await fetch('http://localhost:5000/offers', {
+            const response = await fetch('https://marketing-dashboard-2wfk.onrender.com/offers', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -50,7 +50,7 @@ export const OffersProvider = ({ children }) => {
 
     const handleRemoveOffer = async (offerId) => {
         try {
-            await fetch(`http://localhost:5000/offers/${offerId}`, {
+            await fetch(`https://marketing-dashboard-2wfk.onrender.com/offers/${offerId}`, {
                 method: 'DELETE',
             })
             refetchOffers()
@@ -62,7 +62,7 @@ export const OffersProvider = ({ children }) => {
 
     const handleEditOffer = async (offerId, updatedFields) => {
         try {
-            const res = await fetch(`http://localhost:5000/offers/${offerId}`, {
+            const res = await fetch(`https://marketing-dashboard-2wfk.onrender.com/offers/${offerId}`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(updatedFields),

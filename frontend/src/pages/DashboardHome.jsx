@@ -10,7 +10,11 @@ export default function DashboardHome() {
     <div className="space-y-2">
       <div>
         <BannersProvider>
-          <DashboardStats />
+          <OffersProvider>
+
+            <DashboardStats />
+          </OffersProvider>
+
         </BannersProvider>
 
       </div>

@@ -1,5 +1,5 @@
 import { useBanners } from "../../context/BannersContext";
-
+import {useOffers} from "../../context/OffersContext"
 
 
 // Sample data for demonstration
@@ -24,13 +24,21 @@ const stats = [
 
 const DashboardStats = () => {
   const { banners } = useBanners()
+  const { offers } = useOffers()
 
-  const calculateClicks = (banners) => {
-    return banners.reduce((total, banner) => total + (banner.clicks || 0), 0)
+  console.log(banners.length)
+
+  const filteredValue = (label) => {
+    if(label === 'Banners (All)'){
+      return banners?.length
+    } else if(label === 'Banner clicks') {
+      return banners.reduce((total, banner) => total + (banner.clicks.length), 0)
+    } else if(label === 'Restaurant Offers') {
+      return offers?.length
+    } else {
+      return 0
+    }
   }
-
-  const totalClicks = calculateClicks(banners)
-  console.log(totalClicks)
 
   return (
     <div className="">
@@ -45,7 +53,7 @@ const DashboardStats = () => {
               <span className="text-sm font-medium opacity-90">
                 {stat.label}
               </span>
-              <span className="text-xl font-bold mt-1">{stat.label === 'Banner clicks' ? totalClicks : stat.value}
+              <span className="text-xl font-bold mt-1">{filteredValue(stat.label)}
               </span>
             </div>
             {/* Icon placeholder (replace with actual icons if you like) */}

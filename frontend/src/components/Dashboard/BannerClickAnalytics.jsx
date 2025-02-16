@@ -3,136 +3,118 @@ import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Responsive
 import { useBanners } from "../../context/BannersContext";
 import { FaChartLine } from "react-icons/fa";
 import { MdOutlineNavigateNext } from "react-icons/md";
-import {useNavigate} from 'react-router-dom'
-
-const BannerClicksList = ({ banners, timeframe }) => {
-    return (
-      <div className="mt-4 p-4 bg-gray-50 rounded-lg border w-full">
-        <h3 className="text-lg font-semibold text-gray-700 mb-3">Detailed Banner Performance</h3>
-        
-        {/* Header Row */}
-        <div className="grid grid-cols-5 gap-4 mb-2 px-2 py-1 bg-gray-100 rounded">
-          <div className="col-span-2 text-sm font-medium text-gray-600">Banner Name</div>
-          <div className="text-center text-sm font-medium text-gray-600">Today</div>
-          <div className="text-center text-sm font-medium text-gray-600">This Week</div>
-          <div className="text-center text-sm font-medium text-gray-600">Total</div>
-        </div>
-  
-        {/* Banner List */}
-        <div className="space-y-2 max-h-96 overflow-y-auto">
-          {banners.map((banner) => (
-            <div
-              key={banner.id}
-              className="grid grid-cols-5 gap-4 items-center p-2 bg-white rounded border hover:bg-gray-50 transition-colors"
-            >
-              {/* Banner Title with Ellipsis */}
-              <div className="col-span-2 truncate text-sm font-medium text-gray-700">
-                {banner.title}
-              </div>
-              
-              {/* Timeframe Columns */}
-              <div className="text-center text-sm text-gray-600">
-                {banner.dailyClicks}
-              </div>
-              <div className="text-center text-sm text-gray-600">
-                {banner.weeklyClicks}
-              </div>
-              <div className="text-center text-sm font-semibold text-blue-600">
-                {banner.totalClicks}
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-    );
-  };
-
+import { useNavigate } from "react-router-dom";
 
 export const BannerClickAnalytics = () => {
     const [bannersTimeframe, setBannersTimeframe] = useState("Today");
     const [clicksData, setClicksData] = useState([]);
     const { banners } = useBanners();
-    const [showDetails, setShowDetails] = useState(false);
-
     const navigate = useNavigate()
+    
     const timeTabs = ["Today", "This Week", "This Month"];
 
+    const getStartDate = (timeframe) => {
+        const now = new Date();
+        const currentUTC = new Date(now.toISOString().slice(0, -1)); // UTC date handling
+
+        switch (timeframe) {
+            case "Today":
+                return new Date(Date.UTC(
+                    currentUTC.getUTCFullYear(),
+                    currentUTC.getUTCMonth(),
+                    currentUTC.getUTCDate()
+                ));
+            case "This Week":
+                // Start on Monday
+                const day = currentUTC.getUTCDay();
+                const diff = day === 0 ? 6 : day - 1;
+                const startDate = new Date(currentUTC);
+                startDate.setUTCDate(currentUTC.getUTCDate() - diff);
+                startDate.setUTCHours(0, 0, 0, 0);
+                return startDate;
+            case "This Month":
+                return new Date(Date.UTC(
+                    currentUTC.getUTCFullYear(),
+                    currentUTC.getUTCMonth(),
+                    1
+                ));
+            default:
+                return new Date(0); // All time
+        }
+    };
+
+    const filterClicks = (clicks, timeframe) => {
+        const startDate = getStartDate(timeframe);
+        return clicks.filter(click => 
+            new Date(click.date) >= startDate
+        ).length;
+    };
+
     useEffect(() => {
-        const fetchData = () => {
+        const updateData = () => {
             const data = banners.map(banner => ({
                 name: banner.title,
-                clicks: banner.clicks
+                clicks: filterClicks(banner.clicks, bannersTimeframe)
             }));
             setClicksData(data);
         };
-
-        fetchData();
+        updateData();
     }, [bannersTimeframe, banners]);
 
     const handleBannerFilter = (e) => {
         const selectedBanner = e.target.value;
-        if (selectedBanner === "All") {
-            // Show all banners when "All" is selected
-            const data = banners.map(banner => ({
+        const filterData = (bannersArray) => 
+            bannersArray.map(banner => ({
                 name: banner.title,
-                clicks: banner.clicks
+                clicks: filterClicks(banner.clicks, bannersTimeframe)
             }));
-            setClicksData(data);
+
+        if (selectedBanner === "All") {
+            setClicksData(filterData(banners));
         } else {
-            // Filter for specific banner
             const foundBanner = banners.find(banner => banner.title === selectedBanner);
-            if (foundBanner) {
-                setClicksData([{
-                    name: foundBanner.title,
-                    clicks: foundBanner.clicks
-                }]);
-            }
+            foundBanner && setClicksData([{
+                name: foundBanner.title,
+                clicks: filterClicks(foundBanner.clicks, bannersTimeframe)
+            }]);
         }
     };
 
     return (
-        <div className="flex flex-col md:w-1/2 w-full h-screen">
-            <div className="bg-white rounded shadow space-y-4 p-4">
-                <ChartHeader
-                    title="Banner Click Analytics"
-                    description="View banner clicks for different time periods"
-                    onNavigateNext={() => setShowDetails(!showDetails)}
+        <div className="p-4 bg-white rounded shadow space-y-4 md:w-1/2 w-full">
+            <ChartHeader
+                title="Banner Click Analytics"
+                description="View banner clicks for different time periods"
+                navigateTo={() => navigate('/campaign-management')}
+            />
+
+            <div className="flex justify-between items-center flex-wrap gap-2">
+                <TimeTabs
+                    tabs={timeTabs}
+                    activeTab={bannersTimeframe}
+                    setActiveTab={setBannersTimeframe}
                 />
+            </div>
 
-                <div className="flex justify-between items-center flex-wrap gap-2">
-                    <TimeTabs
-                        tabs={timeTabs}
-                        activeTab={bannersTimeframe}
-                        setActiveTab={setBannersTimeframe}
+            <ResponsiveContainer width="100%" height={300}>
+                <BarChart data={clicksData}>
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis
+                        dataKey="clicks"
+                        type="category"
+                        tick={{ fontSize: 15}}
                     />
-                </div>
-
-                <ResponsiveContainer width="100%" height={300}>
-                    <BarChart data={clicksData}>
-                        <CartesianGrid strokeDasharray="3 3" />
-                        {/* X-axis now shows banner clicks (angled -45) */}
-                        <XAxis
-                            dataKey="clicks"
-                            type="category"
-                            tick={{ fontSize: 15 }}
-                        />
-                        <YAxis />
-                        {/* Use custom tooltip to show banner name and clicks */}
-                        <Tooltip content={<CustomTooltip />} />
-                        <Legend />
-                        <Bar
-                            dataKey="clicks"
-                            fill="#009999"
-                            name="Total Clicks"
-                            maxBarSize={50}
-                        />
-                    </BarChart>
-                </ResponsiveContainer>
-            </div>
-
-            <div className="mt-12 h-full w-[78vw] mb-6">
-                {showDetails && <BannerClicksList banners={banners} timeframe={bannersTimeframe} />}
-            </div>
+                    <YAxis />
+                    <Tooltip content={<CustomTooltip />} />
+                    <Legend />
+                    <Bar
+                        dataKey="clicks"
+                        fill="#009999"
+                        name="Total Clicks"
+                        maxBarSize={50}
+                    />
+                </BarChart>
+            </ResponsiveContainer>
         </div>
     );
 };
@@ -151,23 +133,22 @@ const CustomTooltip = ({ active, payload, label }) => {
     return null;
 };
 
-const ChartHeader = ({ title, description, onNavigateNext }) => (
+const ChartHeader = ({ title, description, navigateTo }) => (
     <div className="flex items-center justify-between mb-4">
-      <div>
-        <h1 className="text-lg font-bold text-gray-700 flex items-center gap-2">
-          <FaChartLine className="text-blue-500" />
-          {title}
-        </h1>
-        <p className="text-sm text-gray-500">{description}</p>
-      </div>
-      <MdOutlineNavigateNext
-        className="text-blue-600 cursor-pointer transform transition-transform hover:scale-110"
-        onClick={onNavigateNext}
-        size={24}
-      />
+        <div>
+            <h1 className="text-lg font-bold text-gray-700 flex items-center gap-2">
+                <FaChartLine className="text-blue-500" />
+                {title}
+            </h1>
+            <p className="text-sm text-gray-500">{description}</p>
+        </div>
+        <MdOutlineNavigateNext
+            className="text-blue-600 cursor-pointer"
+            onClick={navigateTo}
+            size={24}
+        />
     </div>
-)
-
+);
 
 const TimeTabs = ({ tabs, activeTab, setActiveTab }) => (
     <div className="flex gap-2">

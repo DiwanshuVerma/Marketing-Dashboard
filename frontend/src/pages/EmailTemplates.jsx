@@ -12,7 +12,7 @@ const EmailTemplateManagement = () => {
 
   const fetchTemplates = async () => {
     try {
-      const response = await fetch('https://marketing-dashboard-8274.onrender.com/templates');
+      const response = await fetch('https://marketing-dashboard-2wfk.onrender.com/templates');
       const data = await response.json();
       setTemplates(data); // Setting templates to the fetched data
     } catch (error) {
@@ -34,8 +34,8 @@ const EmailTemplateManagement = () => {
     try {
       const method = templateId ? 'PUT' : 'POST';
       const url = templateId
-        ? `https://marketing-dashboard-8274.onrender.com/templates/${templateId}`
-        : 'https://marketing-dashboard-8274.onrender.com/templates';
+        ? `https://marketing-dashboard-2wfk.onrender.com/templates/${templateId}`
+        : 'https://marketing-dashboard-2wfk.onrender.com/templates';
 
       const response = await fetch(url, {
         method,
@@ -63,7 +63,7 @@ const EmailTemplateManagement = () => {
 
   const handleDeleteTemplate = async (id) => {
     try {
-      await fetch(`https://marketing-dashboard-8274.onrender.com/templates/${id}`, { method: 'DELETE' });
+      await fetch(`https://marketing-dashboard-2wfk.onrender.com/templates/${id}`, { method: 'DELETE' });
       setTemplates((prevTemplates) => prevTemplates.filter((template) => template._id !== id));
 
       if(selectedTemplate && selectedTemplate._id === id){
