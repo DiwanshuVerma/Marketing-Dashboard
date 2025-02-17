@@ -81,13 +81,19 @@ export const BannersProvider = ({children}) => {
     
     // Append all updated fields to formData
     Object.keys(updatedFields).forEach(key => {
-      // Special handling for photo since it's a file
-      if (key === 'photoWeb' || key === 'photoApp' && updatedFields[key] instanceof File) {
-        formData.append(key, updatedFields[key]);
+      if (key === 'photoWeb' || key === 'photoApp') {
+        if (updatedFields[key] instanceof File) {
+          formData.append(key, updatedFields[key]);
+        }
+      } else if (Array.isArray(updatedFields[key])) {
+        // Append each array element individually
+        updatedFields[key].forEach(value => {
+          formData.append(key, value);
+        });
       } else {
         formData.append(key, updatedFields[key]);
       }
-    })
+    });
   
     axios.put(`https://marketing-dashboard-2wfk.onrender.com/banners/${bannerId}`, formData, {
       headers: {

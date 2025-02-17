@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
-import {useNavigate} from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import { useOffers } from "../../context/OffersContext";
 import { useBanners } from "../../context/BannersContext";
+import { CiCircleInfo } from "react-icons/ci";
 
 const ImagesComponent = ({ isEditMode, image, onImageChange, type, onChange }) => {
   const [previewImage, setPreviewImage] = useState(null);
@@ -61,29 +62,38 @@ const ImagesComponent = ({ isEditMode, image, onImageChange, type, onChange }) =
   return (
     <div className="mb-6">
       <div className="items-center w-full flex justify-between mb-4">
-        <h3 className="text-lg font-semibold mb-2">
+
+        <h3 className="text-lg font-semibold mb-2 flex items-center gap-2">
           Banner Image for {type}{" "}
-          <span className="text-sm text-red-500">
-            {type === "Web" ? "*1100x300" : "*334x76"}
-          </span>
+          {type === "Web" ? (
+            <div className="relative group font-normal">
+              <CiCircleInfo className="w-5 h-5 text-red-500 cursor-pointer" />
+              <div className="absolute left-1/2 -translate-x-1/2 mt-2 hidden group-hover:block bg-gray-900 text-white text-xs rounded w-48 px-2 py-2">
+                Banner Image resolutions <br /> <br />Homepage Banner: <span className="text-red-400">1400x380</span> <br /> Others: <span className="text-red-400">1100x300</span>
+              </div>
+            </div>
+          ) : (
+            <span className="text-sm text-red-500">*334x76</span>
+          )}
         </h3>
+
 
         {type === 'Web' && (
           <div className="flex items-center gap-3">
-          <div className="flex">
-            <label className={`mr-1  font-bold ${isOfferSelected ? 'text-green-600' : 'text-red-500'}`} htmlFor="offer">{isOfferSelected ? 'Offer:' : 'Select Offer' }</label>
-            <select className="p-1 rounded" value={bannerOffer} name="" id="offer" disabled={!isEditMode} onChange={HandleBannerOffer}>
-              <option value="" >--Select--</option>
-              {
-                offers.map((offer, offerIndex) => (
-                  <option key={offerIndex} value={offer.name}>{offer.name}</option>
-                ))
-              }
-            </select>
-          </div>
-          <div>
+            <div className="flex">
+              <label className={`mr-1  font-bold ${isOfferSelected ? 'text-green-600' : 'text-red-500'}`} htmlFor="offer">{isOfferSelected ? 'Offer:' : 'Select Offer'}</label>
+              <select className="p-1 rounded" value={bannerOffer} name="" id="offer" disabled={!isEditMode} onChange={HandleBannerOffer}>
+                <option value="" >--Select--</option>
+                {
+                  offers.map((offer, offerIndex) => (
+                    <option key={offerIndex} value={offer.name}>{offer.name}</option>
+                  ))
+                }
+              </select>
+            </div>
+            <div>
               <button className="bg-green-600 rounded p-1 text-white" disabled={!isEditMode} onClick={() => navigate('/RestaurantOffers')}>Create new</button>
-          </div>
+            </div>
           </div>
         )}
 

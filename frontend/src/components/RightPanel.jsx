@@ -20,8 +20,12 @@ const RightPanel = () => {
   useEffect(() => {
     if (selectedProduct) {
       setData({ ...selectedProduct });
-      setSelectedPages(selectedProduct.pages || [])
-      setSelectedCities(selectedProduct.cities || [])
+      // Parse pages into an array if it's a string
+      const pages = Array.isArray(selectedProduct.pages) 
+        ? selectedProduct.pages 
+        : (selectedProduct.pages ? selectedProduct.pages.split(',') : []);
+      setSelectedPages(pages);
+      setSelectedCities(selectedProduct.cities || []);
     }
   }, [selectedProduct]);
 

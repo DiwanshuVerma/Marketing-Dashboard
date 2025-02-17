@@ -1,20 +1,21 @@
 // src/components/RightPanel/PagesComponent.jsx
 import React from "react";
+import { CiCircleInfo } from "react-icons/ci";
 
 const availablePages = [
   "Homepage",
-  "Product Page",
-  "Cart Page",
-  "Checkout Page",
-  "Offers Page"
+  "Order-online",
+  "Dining-out",
+  "Night-life",
 ];
 
 const PagesComponent = ({ isEditMode, selectedPages, onChange }) => {
+  
   const handleCheckboxChange = (page) => {
     if (selectedPages.includes(page)) {
       onChange(selectedPages.filter((p) => p !== page));
     } else {
-      onChange([...selectedPages, 'pages', page]);
+      onChange([...selectedPages, page]);
     }
   };
 
@@ -32,6 +33,12 @@ const PagesComponent = ({ isEditMode, selectedPages, onChange }) => {
               className="w-4 h-4"
             />
             <span>{page}</span>
+            {page === "Homepage" && <div className="relative group">
+              <CiCircleInfo className="w-5 h-5 text-red-500 cursor-pointer" />
+              <div className="absolute left-1/2 -translate-x-1/2 mt-2 hidden group-hover:block bg-gray-900 text-white text-xs rounded w-48 px-2 py-2">
+                Banner resolution: <span className="text-red-400">1400x380</span>
+              </div>
+            </div>}
           </label>
         ))}
       </div>

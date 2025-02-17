@@ -14,7 +14,7 @@ const CampaignCities = ({ isEditMode, selectedCities, onChange }) => {
     if (selectedCities.includes(city)) {
       onChange(selectedCities.filter((p) => p !== city));
     } else {
-      onChange([...selectedCities, 'cities', city]);
+      onChange([...selectedCities, city]);
     }
   };
 
