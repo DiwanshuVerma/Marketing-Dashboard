@@ -6,9 +6,9 @@ const bannerSchema = new mongoose.Schema({
   status: { type: String, enum: ['Active', 'Upcoming', 'Inactive'], default: 'Inactive'},
   photoWeb: { type: String },
   photoApp: { type: String },
-  pages: {type: String},
+  pages: [{type: String}],
   offer: {type: String},
-  cities: {type: String},
+  cities: [{type: String}],
   startDate: { type: Date },
   endDate: { type: Date },
 
