@@ -42,19 +42,8 @@ exports.updateBanner = async (req, res) => {
     const banner = await Banner.findById(id);
     if (!banner) return res.status(404).send("Banner not found");
 
-    console.log("Updating banner");
-
-    // Update simple fields if provided
-    if (title) banner.title = title;
-    if (typeof isDefault !== "undefined") banner.isDefault = isDefault;
-    if (pages) banner.pages = pages;
-    if (cities) banner.cities = cities;
-    if (offer) banner.offer = offer;
-
-    // Update the date fields if provided.
-    // (This assignment is optional because we update them again below if needed.)
-    if (startDate) banner.startDate = startDate;
-    if (endDate) banner.endDate = endDate;
+    // update the fields explicitly
+    Object.assign(banner, { title, isDefault, offer, pages, cities })
 
     // Update status based on the provided dates.
     // If both startDate and endDate are provided:
@@ -142,7 +131,7 @@ exports.deleteBanner = async (req, res) => {
 
 
 // return active banners
-exports.getActiveResBanners = async (req, res) => {
+exports.getActiveBanners = async (req, res) => {
   try {
     const activeBanners = await Banner.find({ status: 'Active' });
     res.status(200).json(activeBanners);
