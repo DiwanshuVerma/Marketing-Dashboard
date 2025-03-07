@@ -7,9 +7,10 @@ const availablePages = [
   "Order-online",
   "Dining-out",
   "Night-life",
+  "Tiffin-services"
 ];
 
-const PagesComponent = ({ isEditMode, selectedPages, onChange }) => {
+const PagesComponent = ({ isEditMode, selectedPages, onChange }) => { 
   
   const handleCheckboxChange = (page) => {
     if (selectedPages.includes(page)) {

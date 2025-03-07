@@ -7,15 +7,7 @@ const collectionSchema = new mongoose.Schema({
     photoWeb: { type: String },
     photoApp: { type: String },
 
-    restaurants: [
-        { type: String },
-        {
-            status: {
-                type: String,
-                enum: ['Approved', 'Pending', 'Denied']
-            }
-        }
-    ],
+    restaurants: [{ type: String }],
 
     offer: { type: String },
     cities: [{ type: String }],
@@ -26,6 +18,8 @@ const collectionSchema = new mongoose.Schema({
         date: { type: Date, default: Date.now }
     }]
 });
+
+collectionSchema.set('optimisticConcurrency', false);
 
 collectionSchema.pre("save", function (next) {
     // Only recalc status if both startDate and endDate are provided.

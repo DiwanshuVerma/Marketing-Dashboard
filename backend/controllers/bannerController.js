@@ -36,68 +36,60 @@ exports.createBanner = async (req, res) => {
 exports.updateBanner = async (req, res) => {
   try {
     const { id } = req.params;
-    const { title, isDefault, pages, offer, cities, startDate, endDate } = req.body;
+    const { startDate, endDate, ...bodyFields } = req.body;
 
     // Find the banner document
     const banner = await Banner.findById(id);
     if (!banner) return res.status(404).send("Banner not found");
 
-    // update the fields explicitly
-    Object.assign(banner, { title, isDefault, offer, pages, cities })
+    // Update only the fields that are present in the request body
+    const fieldsToUpdate = {};
+    Object.keys(bodyFields).forEach(key => {
+      if (bodyFields[key] !== undefined) { // Check if the field is provided
+        fieldsToUpdate[key] = bodyFields[key];
+      }
+    });
+    Object.assign(banner, fieldsToUpdate);
 
     // Update status based on the provided dates.
-    // If both startDate and endDate are provided:
-    if (startDate && endDate) {
-      const now = new Date();
-      const start = new Date(startDate);
-      const end = new Date(endDate);
-      if (now < start) {
-        banner.status = "Upcoming";
-      } else if (now > end) {
-        banner.status = "Inactive";  // or "Expired" if you prefer
-      } else {
-        banner.status = "Active";
-      }
-      // Ensure the banner dates are set to the provided values
-      banner.startDate = startDate;
-      banner.endDate = endDate;
-    }
-    // If only one date is provided, merge with the existing values in the banner
-    else if (startDate || endDate) {
-      // Use the current banner's dates as the fallback
-      const newStart = startDate ? new Date(startDate) : new Date(banner.startDate);
-      const newEnd = endDate ? new Date(endDate) : new Date(banner.endDate);
-      // Update the banner's dates accordingly
-      banner.startDate = startDate ? startDate : banner.startDate;
-      banner.endDate = endDate ? endDate : banner.endDate;
+    let newStartDate = banner.startDate;
+    let newEndDate = banner.endDate;
 
+    if (startDate !== undefined || endDate !== undefined) {
+      // Merge provided dates with existing ones
+      newStartDate = startDate !== undefined ? new Date(startDate) : new Date(banner.startDate);
+      newEndDate = endDate !== undefined ? new Date(endDate) : new Date(banner.endDate);
+
+      // Update banner dates if provided
+      if (startDate !== undefined) banner.startDate = startDate;
+      if (endDate !== undefined) banner.endDate = endDate;
+
+      // Determine the new status
       const now = new Date();
-      if (now < newStart) {
+      if (now < newStartDate) {
         banner.status = "Upcoming";
-      } else if (now > newEnd) {
-        banner.status = "Inactive";  // or "Expired" if that is your convention
+      } else if (now > newEndDate) {
+        banner.status = "Inactive";
       } else {
         banner.status = "Active";
       }
     }
-    // If neither date is provided, leave the status unchanged
 
     // Handle image uploads if provided
     if (req.files) {
-      console.log('updating banner, file is present')
       if (req.files.photoWeb) {
-        banner.photoWeb = await uploadToCloudinary(req.files.photoWeb[0].path, "banners");
+        banner.photoWeb = await uploadToCloudinary(req.files.photoWeb[0].path, "collections");
       }
       if (req.files.photoApp) {
-        banner.photoApp = await uploadToCloudinary(req.files.photoApp[0].path, "banners");
+        banner.photoApp = await uploadToCloudinary(req.files.photoApp[0].path, "collections");
       }
     }
 
     await banner.save();
     res.json({ message: "Banner updated successfully", banner });
-    console.log('error inside upda: ')
   } catch (err) {
-    res.status(400).send(err.message);
+    console.log("error while updating banner", err.message)
+    res.status(400).json(err.message);
   }
 };
 

@@ -2,16 +2,13 @@ import React, { useState } from "react";
 import { NavLink } from "react-router-dom";
 import {
   HiOutlineHome,
-  HiOutlineTruck,
-  HiOutlineCurrencyDollar,
   HiOutlineGift,
   HiOutlineCog,
-  HiOutlineInformationCircle,
   HiOutlineQuestionMarkCircle,
 } from "react-icons/hi";
-import { MdOutlineDining, MdCampaign } from "react-icons/md";
+import { MdCampaign, MdHotelClass } from "react-icons/md";
 import { IoShareSocial } from "react-icons/io5";
-import { FaHandshake, FaBookOpen } from "react-icons/fa";
+import { FaBookOpen } from "react-icons/fa";
 
 
 import { outletData } from "../data/dummy"; // Update the path as necessary  // Import dummy data
@@ -104,6 +101,7 @@ export default function Sidebar() {
         <ul className="space-y-1">
           <li>{navItem("/", HiOutlineHome, "Dashboard")}</li>
           <li>{navItem("/campaign-management", MdCampaign, "Campaign Management")}</li>
+          <li>{navItem("/collection-management", MdHotelClass, "Collection Management")}</li>
           <li>{navItem("/email-templates", IoShareSocial, "Email Templates")}</li>
           <li>
             {navItem(

@@ -6,53 +6,64 @@ import ImagesComponent from "./RightPanel/ImagesComponent";
 import ActionButtonsComponent from "./RightPanel/ActionButtonsComponent";
 import PagesComponent from "./RightPanel/PagesComponent";
 import CampaignCities from "./RightPanel/CampaignCities";
-import { useBanners } from "../context/BannersContext";
 import { OffersProvider } from "../context/OffersContext";
+import { useResource } from "../context/Banner_CollectionContext"
+import CollectionType from "./CollectionManagement/CollectionType";
 
 const RightPanel = () => {
-  const { selectedProduct, handleUpdateBanner, handleDeleteBanner } = useBanners()
+  const { selectedResource, handleUpdate, handleDelete } = useResource()
 
   const [isEditMode, setIsEditMode] = useState(false);
-  const [data, setData] = useState(selectedProduct || {});
-  const [selectedPages, setSelectedPages] = useState(selectedProduct.pages || []);
-  const [selectedCities, setSelectedCities] = useState(selectedProduct.cities || []);
-
+  const [data, setData] = useState(selectedResource || {});
+  const [selectedPages, setSelectedPages] = useState(selectedResource?.pages || []);
+  const [selectedCities, setSelectedCities] = useState(selectedResource?.cities || []);
+  
+  const [selectedRestaurants, setSelectedRestaurants] = useState(selectedResource?.restaurants || []);
   useEffect(() => {
-    if (selectedProduct) {
-      setData({ ...selectedProduct });
-      // Parse pages into an array if it's a string
-      const pages = Array.isArray(selectedProduct.pages) 
-        ? selectedProduct.pages 
-        : (selectedProduct.pages ? selectedProduct.pages.split(',') : []);
-      setSelectedPages(pages);
-      setSelectedCities(selectedProduct.cities || []);
+
+    if (selectedResource) {
+      setData({ ...selectedResource });
+ 
+      setSelectedPages(selectedResource.pages || [])
+      setSelectedRestaurants(selectedResource?.restaurants || [])
+      setSelectedCities(selectedResource.cities || []);
     }
-  }, [selectedProduct]);
+  }, [selectedResource]);
 
   const handleFieldChange = (field, value) => {
-    setData((prev) => ({ ...prev, [field]: value }));
+    setData((prev) => ({ ...prev, [field]: value }))
   };
 
   const handleSave = () => {
-    const updatedFields = {
-      ...data,
-      pages: selectedPages,
-      cities: selectedCities
-    };
-    handleUpdateBanner(data._id, updatedFields);
+    const updatedFields = { ...data }
+    console.log(selectedRestaurants)
+    if (selectedResource.pages !== undefined) {
+      updatedFields.pages = selectedPages
+    }
+    if (selectedResource.restaurants !== undefined) {
+      console.log('selectedRestaurants type:', typeof selectedRestaurants, selectedRestaurants);
+
+      updatedFields.restaurants = selectedRestaurants
+    }
+    if (selectedResource.cities !== undefined) {
+      updatedFields.cities = selectedCities
+    }
+
+    handleUpdate(data._id, updatedFields);
     setIsEditMode(false);
   };
 
   const handleCancel = () => {
-    setData({ ...selectedProduct });
-    setSelectedPages(selectedProduct.pages || [])
-    setSelectedCities(selectedProduct.cities || [])
+    setData({ ...selectedResource });
+    setSelectedPages(selectedResource.pages || [])
+    setSelectedRestaurants(selectedRestaurants.restaurants || [])
+    setSelectedCities(selectedResource.cities || [])
     setIsEditMode(false);
   };
 
-  const handleDelete = () => {
+  const handleDeleteItem = () => {
     if (window.confirm("Are you sure you want to delete this item?")) {
-      handleDeleteBanner(data._id);
+      handleDelete(data._id);
     }
   };
 
@@ -74,11 +85,15 @@ const RightPanel = () => {
         isEditMode={isEditMode}
         onEdit={() => setIsEditMode(true)}
         onCancel={handleCancel}
-        onDelete={handleDelete}
+        onDelete={handleDeleteItem}
         onChange={handleFieldChange}
       />
 
-      {/* Banner Images */}
+      {!selectedResource.pages && (
+        <CollectionType isEditMode={isEditMode} selectedResource={selectedResource} selectedRestaurants={selectedRestaurants} onChange={setSelectedRestaurants} />
+      )}
+
+      {/* Images */}
       <OffersProvider>
         <ImagesComponent
           type="Web"
@@ -113,22 +128,25 @@ const RightPanel = () => {
         onChange={handleFieldChange}
       />
 
+      {selectedResource.pages && (
 
-      <div className="flex justify-between mr-36 max-h-72 overflow-hidden">
-        {/* Pages Selection */}
-        <PagesComponent
-          isEditMode={isEditMode}
-          selectedPages={selectedPages}
-          onChange={setSelectedPages}
-        />
-        <div className="overflow-auto">
-          <CampaignCities
+        <div className="flex justify-between mr-36 max-h-72 overflow-hidden">
+          {/* Pages Selection */}
+          <PagesComponent
             isEditMode={isEditMode}
-            selectedCities={selectedCities}
-            onChange={setSelectedCities}
+            selectedPages={selectedPages}
+            onChange={setSelectedPages}
           />
+          <div className="overflow-auto">
+            <CampaignCities
+              isEditMode={isEditMode}
+              selectedCities={selectedCities}
+              onChange={setSelectedCities}
+            />
+          </div>
         </div>
-      </div>
+      )}
+
 
       {/* Save/Cancel */}
       {isEditMode && (

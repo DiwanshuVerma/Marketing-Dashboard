@@ -1,28 +1,28 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from 'react-router-dom'
 import { useOffers } from "../../context/OffersContext";
-import { useBanners } from "../../context/BannersContext";
 import { CiCircleInfo } from "react-icons/ci";
+import { useResource } from "../../context/Banner_CollectionContext";
 
 const ImagesComponent = ({ isEditMode, image, onImageChange, type, onChange }) => {
   const [previewImage, setPreviewImage] = useState(null);
   const [isOfferSelected, setIsOfferSelected] = useState(false)
-  const { selectedProduct } = useBanners()
-  const [bannerOffer, setBannerOffer] = useState(selectedProduct?.offer || "--Select--")
+  const { selectedResource } = useResource()
+  const [bannerOffer, setBannerOffer] = useState(selectedResource?.offer || "--Select--")
   const navigate = useNavigate()
-
+  
   const { offers } = useOffers()
 
 
   useEffect(() => {
-    if (selectedProduct?.offer) {
-      setBannerOffer(selectedProduct?.offer || "--Select--")
+    if (selectedResource?.offer) {
+      setBannerOffer(selectedResource?.offer || "--Select--")
       setIsOfferSelected(true);
     } else {
       setBannerOffer("--Select--");
       setIsOfferSelected(false);
     }
-  }, [selectedProduct]);
+  }, [selectedResource]);
 
   useEffect(() => {
     if (!image) {
@@ -63,13 +63,13 @@ const ImagesComponent = ({ isEditMode, image, onImageChange, type, onChange }) =
     <div className="mb-6">
       <div className="items-center w-full flex justify-between mb-4">
 
-        <h3 className="text-lg font-semibold mb-2 flex items-center gap-2">
-          Banner Image for {type}{" "}
+        <h3 className="text-lg text-gray-800 font-semibold mb-2 flex items-center gap-2">
+          Image for {type}{" "}
           {type === "Web" ? (
             <div className="relative group font-normal">
               <CiCircleInfo className="w-5 h-5 text-red-500 cursor-pointer" />
               <div className="absolute left-1/2 -translate-x-1/2 mt-2 hidden group-hover:block bg-gray-900 text-white text-xs rounded w-48 px-2 py-2">
-                Banner Image resolutions <br /> <br />Homepage Banner: <span className="text-red-400">1400x380</span> <br /> Others: <span className="text-red-400">1100x300</span>
+                Image resolutions <br /> <br />Homepage Banner: <span className="text-red-400">1400x380</span> <br /> Others: <span className="text-red-400">1100x300</span>
               </div>
             </div>
           ) : (

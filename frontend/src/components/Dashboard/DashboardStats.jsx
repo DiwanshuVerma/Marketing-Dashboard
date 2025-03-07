@@ -1,4 +1,4 @@
-import { useBanners } from "../../context/BannersContext";
+import { useResource } from "../../context/Banner_CollectionContext";
 import {useOffers} from "../../context/OffersContext"
 
 
@@ -23,16 +23,16 @@ const stats = [
 
 
 const DashboardStats = () => {
-  const { banners } = useBanners()
+  const { resources } = useResource()
   const { offers } = useOffers()
 
-  console.log(banners.length)
+  console.log(resources.length)
 
   const filteredValue = (label) => {
     if(label === 'Banners (All)'){
-      return banners?.length
+      return resources?.length
     } else if(label === 'Banner clicks') {
-      return banners.reduce((total, banner) => total + (banner.clicks.length), 0)
+      return resources.reduce((total, banner) => total + (banner.clicks.length), 0)
     } else if(label === 'Restaurant Offers') {
       return offers?.length
     } else {

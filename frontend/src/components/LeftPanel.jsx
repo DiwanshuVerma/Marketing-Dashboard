@@ -1,27 +1,12 @@
 // src/components/LeftPanel.jsx
 import React, { useState, useEffect } from "react";
-import axios from "axios";
 import {
   FiChevronDown,
-  FiPlusCircle,
-  FiLink,
-  FiLayers,
   FiPlus,
 } from "react-icons/fi";
 import { MdOutlineFiberManualRecord } from "react-icons/md";
-import PopUp from "./PopUp";
-import { useBanners } from "../context/BannersContext";
+import { useResource } from "../context/Banner_CollectionContext";
 
-const campaigns = [
-  {
-    name: "Banners",
-    categories: [
-      { name: "Default Banners" },
-      { name: "Discount Banners" }
-    ]
-  },
-  { name: "Collections" }
-];
 
 
 const CreateCampaignModal = ({ onClose, onCreate, defaultOrNot }) => {
@@ -51,9 +36,9 @@ const CreateCampaignModal = ({ onClose, onCreate, defaultOrNot }) => {
   return (
     <div className="fixed inset-0 bg-gray-800 bg-opacity-50 flex justify-center items-center">
       <div className="bg-white p-6 rounded-md shadow-md w-1/3">
-        <h2 className="text-xl font-bold mb-4">Create New Banner</h2>
+        <h2 className="text-xl font-bold mb-4">Create New</h2>
         <div className="mb-4">
-          <label className="block text-gray-700 mb-1">Banner Name</label>
+          <label className="block text-gray-700 mb-1">Name</label>
           <input
             type="text"
             value={name}
@@ -83,8 +68,8 @@ const CreateCampaignModal = ({ onClose, onCreate, defaultOrNot }) => {
 };
 
 
-const LeftPanel = () => {
-  const { banners = [], selectedProduct, setSelectedProduct, handleCreateBanner } = useBanners()
+const LeftPanel = ({campaigns}) => {
+  const { resources = [], selectedResource, setSelectedResource, handleCreate } = useResource()
 
   const [openCategories, setOpenCategories] = useState({});
   const [isPopUpOpen, setIsPopUpOpen] = useState(false);
@@ -93,23 +78,23 @@ const LeftPanel = () => {
   // This state holds the status filter for each category by name.
   const [statusFilters, setStatusFilters] = useState({});
 
-  const [selectedTemplateId, setSelectedTemplateId] = useState(selectedProduct?._id || null);
+  const [selectedTemplateId, setSelectedTemplateId] = useState(selectedResource?._id || null);
 
   useEffect(() => {
-    if (selectedProduct) {
-      setSelectedTemplateId(selectedProduct._id);
+    if (selectedResource) {
+      setSelectedTemplateId(selectedResource._id);
     }
-  }, [selectedProduct]);
-
+  }, [selectedResource]);
+  
   useEffect(() => {
     setOpenCategories((prev) => ({
       ...prev,
-      ["Banners"]: true
+      [campaigns[0].name]: true
     }))
-  }, [])
+  }, [resources])
 
   const handleBannerClick = (banner) => {
-    setSelectedProduct(banner);
+    setSelectedResource(banner);
     setSelectedTemplateId(banner._id);
   };
 
@@ -120,13 +105,13 @@ const LeftPanel = () => {
     }));
   };
 
-  // Filter banners by category – preserving your Default/Discount logic.
+  // Filter resources by category – preserving your Default/Discount logic.
   const filterBannersByCategory = (catgName) => {
-    if (catgName === "Default Banners") {
-      return banners.filter((banner) => banner.isDefault);
+    if (catgName === campaigns[0].categories[0].name) {
+      return resources.filter((banner) => banner.isDefault);
     }
-    if (catgName === "Discount Banners") {
-      return banners.filter((banner) => !banner.isDefault);
+    if (catgName === campaigns[0].categories[1].name) {
+      return resources.filter((banner) => !banner.isDefault);
     }
     return [];
   };
@@ -155,7 +140,7 @@ const LeftPanel = () => {
                   }`}
               >
                 {campaign.categories.map((catg) => {
-                  // Get the banners for this category
+                  // Get the resources for this category
                   let bannersForCatg = filterBannersByCategory(catg.name);
                   // Get the current status filter for this category (default to "All")
                   const currentFilter = statusFilters[catg.name] || "All";
@@ -174,17 +159,17 @@ const LeftPanel = () => {
                           className="text-blue-400"
                           onClick={() => {
                             setIsPopUpOpen(true);
-                            { catg.name === 'Default Banners' ? setDefaultOrNot(true) : setDefaultOrNot(false) }
+                            { catg.name === campaigns[0].categories[0].name ? setDefaultOrNot(true) : setDefaultOrNot(false) }
 
                           }}
-                          title={`${catg.name === 'Default Banners' ? 'Add default banner' : 'Add banner'}`}
+                          title='Add'
                         >
                           <FiPlus size={22} />
                         </button>
                       </div>
 
                       {/* Dropdown filter selector */}
-                      {catg.name !== "Default Banners" &&
+                      {catg.name !== campaigns[0].categories[0].name &&
                         <div className="mb-2">
                           <select
                             className="border rounded p-1"
@@ -251,7 +236,7 @@ const LeftPanel = () => {
             setIsPopUpOpen(false);
           }}
           onCreate={(newBanner) => {
-            handleCreateBanner(newBanner);
+            handleCreate(newBanner);
             setIsPopUpOpen(false);
           }}
           defaultOrNot={defaultOrNot}

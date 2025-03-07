@@ -1,20 +1,20 @@
-// src/pages/CampaignManagement.jsx
+// src/pages/CollectionManagement.jsx
 import React, { useState, useEffect } from 'react';
 import LeftPanel from '../components/LeftPanel';
 import RightPanel from '../components/RightPanel';
 import { useResource } from '../context/Banner_CollectionContext';
 
 const campaigns = [
-  {
-    name: "Banners",
-    categories: [
-      { name: "Default Banners" },
-      { name: "Discount Banners" }
-    ]
-  }
-];
+    {
+      name: "Collections",
+      categories: [
+        { name: "Default Collections" },
+        { name: "Discount Collections" }
+      ]
+    }
+  ];
 
-const CampaignManagement = () => {
+const CollectionManagement = () => {
   const {selectedResource} = useResource()
 
   return (  
@@ -29,4 +29,4 @@ const CampaignManagement = () => {
   )
 }
 
-export default CampaignManagement; 
+export default CollectionManagement; 

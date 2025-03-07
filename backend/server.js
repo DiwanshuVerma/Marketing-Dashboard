@@ -7,7 +7,7 @@ const Banner = require('./models/Banner');
 const PORT = process.env.PORT || 5000;
 
 connectDB();
-
+// ping the server in evry 5min to prevent from going sleep
 const url = `https://marketing-dashboard-2wfk.onrender.com`;
 const interval = 300000; // 5mins
 

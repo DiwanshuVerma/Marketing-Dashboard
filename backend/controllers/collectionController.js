@@ -36,52 +36,45 @@ exports.createCollection = async (req, res) => {
 exports.updateCollection = async (req, res) => {
   try {
     const { id } = req.params;
-    const { title, isDefault, offer, restaurants, cities, startDate, endDate } = req.body;
+    const { startDate, endDate, ...bodyFields } = req.body;
 
-    // Find the collection document
+
+    // find the collection document
     const collection = await Collection.findById(id);
     if (!collection) return res.status(404).send("Collection not found");
 
-    // update the fields explicitly
-    console.log(title)
-    Object.assign(collection, { title, isDefault, offer, restaurants, cities })
-
-    // Update status based on the provided dates.
-    // If both startDate and endDate are provided:
-    if (startDate && endDate) {
-      const now = new Date();
-      const start = new Date(startDate);
-      const end = new Date(endDate);
-      if (now < start) {
-        collection.status = "Upcoming";
-      } else if (now > end) {
-        collection.status = "Inactive";  // or "Expired" if you prefer
-      } else {
-        collection.status = "Active";
+    // update only the fields that are present in the request body
+    const fieldsToUpdate = {};
+    Object.keys(bodyFields).forEach(key => {
+      if (bodyFields[key] !== undefined) { // Check if the field is provided
+        fieldsToUpdate[key] = bodyFields[key];
       }
-      // Ensure the collection dates are set to the provided values
-      collection.startDate = startDate;
-      collection.endDate = endDate;
-    }
-    // If only one date is provided, merge with the existing values in the collection
-    else if (startDate || endDate) {
-      // Use the current collection's dates as the fallback
-      const newStart = startDate ? new Date(startDate) : new Date(collection.startDate);
-      const newEnd = endDate ? new Date(endDate) : new Date(collection.endDate);
-      // Update the collection's dates accordingly
-      collection.startDate = startDate ? startDate : collection.startDate;
-      collection.endDate = endDate ? endDate : collection.endDate;
+    });
+    Object.assign(collection, fieldsToUpdate);
 
+    // update status based on the provided dates.
+    let newStartDate = collection.startDate;
+    let newEndDate = collection.endDate;
+
+    if (startDate !== undefined || endDate !== undefined) {
+      // Merge provided dates with existing ones
+      newStartDate = startDate !== undefined ? new Date(startDate) : new Date(collection.startDate);
+      newEndDate = endDate !== undefined ? new Date(endDate) : new Date(collection.endDate);
+
+      // Update collection dates if provided
+      if (startDate !== undefined) collection.startDate = startDate;
+      if (endDate !== undefined) collection.endDate = endDate;
+
+      // Determine the new status
       const now = new Date();
-      if (now < newStart) {
+      if (now < newStartDate) {
         collection.status = "Upcoming";
-      } else if (now > newEnd) {
-        collection.status = "Inactive";  // or "Expired" if that is your convention
+      } else if (now > newEndDate) {
+        collection.status = "Inactive";
       } else {
         collection.status = "Active";
       }
     }
-    // If neither date is provided, leave the status unchanged
 
     // Handle image uploads if provided
     if (req.files) {
@@ -96,8 +89,8 @@ exports.updateCollection = async (req, res) => {
     await collection.save();
     res.json({ message: "Collection updated successfully", collection });
   } catch (err) {
-    console.log("error while updating coll")
-    res.status(400).send(err.message);
+    console.log("error while updating collection: ", err.message)
+    res.status(400).json(err.message);
   }
 };
 

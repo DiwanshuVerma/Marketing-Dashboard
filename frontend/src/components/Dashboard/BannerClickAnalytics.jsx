@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from "react";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from "recharts";
-import { useBanners } from "../../context/BannersContext";
 import { FaChartLine } from "react-icons/fa";
 import { MdOutlineNavigateNext } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
+import { useResource } from "../../context/Banner_CollectionContext";
 
 export const BannerClickAnalytics = () => {
     const [bannersTimeframe, setBannersTimeframe] = useState("Today");
     const [clicksData, setClicksData] = useState([]);
-    const { banners } = useBanners();
+    const { resources } = useResource();
     const navigate = useNavigate()
     
     const timeTabs = ["Today", "This Week", "This Month"];
@@ -52,14 +52,14 @@ export const BannerClickAnalytics = () => {
 
     useEffect(() => {
         const updateData = () => {
-            const data = banners.map(banner => ({
+            const data = resources.map(banner => ({
                 name: banner.title,
                 clicks: filterClicks(banner.clicks, bannersTimeframe)
             }));
             setClicksData(data);
         };
         updateData();
-    }, [bannersTimeframe, banners]);
+    }, [bannersTimeframe, resources]);
 
     const handleBannerFilter = (e) => {
         const selectedBanner = e.target.value;
@@ -70,9 +70,9 @@ export const BannerClickAnalytics = () => {
             }));
 
         if (selectedBanner === "All") {
-            setClicksData(filterData(banners));
+            setClicksData(filterData(resources));
         } else {
-            const foundBanner = banners.find(banner => banner.title === selectedBanner);
+            const foundBanner = resources.find(banner => banner.title === selectedBanner);
             foundBanner && setClicksData([{
                 name: foundBanner.title,
                 clicks: filterClicks(foundBanner.clicks, bannersTimeframe)

@@ -13,7 +13,8 @@ import ProfileManagement from "./pages/ProfileManagement";
 import Help from "./pages/Help";
 import EmailTempalateEdit from "./components/EmailTempalateEdit";
 import { OffersProvider } from "./context/OffersContext";
-import { BannersProvider } from "./context/BannersContext";
+import { ResourceProvider } from "./context/Banner_CollectionContext";
+import CollectionManagement from "./pages/CollectionManagement";
 
 export default function App() {
   return (
@@ -22,9 +23,15 @@ export default function App() {
         <Route path="/" element={<DashboardHome />} />
 
         <Route path="/campaign-management" element={
-          <BannersProvider>
+          <ResourceProvider resourceType="banners">
               <CampaignManagement />
-          </BannersProvider>
+          </ResourceProvider>
+        } />
+
+        <Route path="/collection-management" element={
+          <ResourceProvider resourceType="collections">
+              <CollectionManagement />
+          </ResourceProvider>
         } />
 
         <Route path="/email-templates" element={<EmailTemplates />} />
