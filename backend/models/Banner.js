@@ -34,7 +34,6 @@ bannerSchema.pre("save", function (next) {
   } else {
     this.status = 'Inactive'
   }
-  console.log('status is: ', this.status)
   next();
 });
 

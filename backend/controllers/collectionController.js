@@ -76,6 +76,13 @@ exports.updateCollection = async (req, res) => {
       }
     }
 
+    // default collection will always be active and have no dates
+    if (collection.isDefault) {
+      collection.status = "Active";
+      collection.startDate = undefined;
+      collection.endDate = undefined
+    }
+
     // Handle image uploads if provided
     if (req.files) {
       if (req.files.photoWeb) {
@@ -98,27 +105,44 @@ exports.updateCollection = async (req, res) => {
 // to delete
 exports.deleteCollection = async (req, res) => {
   try {
-    const { id } = req.params
+    const { id } = req.params;
 
-    const collection = await Collection.findById(req.params.id);
-    if (!collection) return res.status(404).send('Collection not found');
+    const collection = await Collection.findById(id);
+    if (!collection) return res.status(404).json({ message: "Collection not found" });
 
-    // Delete images if they exist
-    if (collection.photoWeb) {
-      const publicIdWeb = collection.photoWeb.split('/').pop().split('.')[0]; // Extract public ID
-      await cloudinary.uploader.destroy(`collections/${publicIdWeb}`);
+    // Check for last default Collection
+    if (collection.isDefault) {
+      const defaultCount = await Collection.countDocuments({ isDefault: true });
+      if (defaultCount <= 1) {
+        return res.status(403).json({
+          message: "At least one default Collection must remain"
+        });
+      }
     }
 
-    if (collection.photoApp) {
-      const publicIdApp = collection.photoApp.split('/').pop().split('.')[0]; // Extract public ID
-      await cloudinary.uploader.destroy(`collections/${publicIdApp}`);
-    }
+    // Cloudinary deletion helper
+    const deleteCloudinaryAsset = async (url) => {
+      if (!url) return;
+      const publicId = url.split('/upload/')[1]?.split('.')[0];
+      if (publicId) {
+        await cloudinary.uploader.destroy(publicId, { resource_type: 'image' });
+      }
+    };
 
-    await Collection.findByIdAndDelete(id)
+    // Parallel deletion
+    await Promise.all([
+      deleteCloudinaryAsset(Collection.photoWeb),
+      deleteCloudinaryAsset(Collection.photoApp)
+    ]);
 
-    return res.status(204).json({ message: "Collection deleted successfully" });
+    await Collection.findByIdAndDelete(id);
+    return res.status(200).json({ message: "Collection deleted successfully" });
+
   } catch (err) {
-    res.status(500).json({ message: "Error deleting collection", Error: err.message });
+    console.error("Delete error:", err);
+    return res.status(500).json({
+      message: "Deletion failed. Please try again later"
+    });
   }
 };
 

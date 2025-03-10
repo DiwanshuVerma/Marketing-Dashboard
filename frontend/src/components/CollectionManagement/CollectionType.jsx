@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { clientSideRestaurants } from '../../data/restaurants'
-import { FaStar, FaInfoCircle } from "react-icons/fa";
+import { FaStar } from "react-icons/fa";
 
 const CollectionType = ({ isEditMode, selectedResource, onChange, selectedRestaurants }) => {
 

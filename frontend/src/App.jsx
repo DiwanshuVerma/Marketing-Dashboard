@@ -46,7 +46,6 @@ export default function App() {
         } />
         <Route path="/profile-management" element={<ProfileManagement />} />
         <Route path="/help" element={<Help />} />
-        {/* If you need more pages, add them here */}
       </Route>
     </Routes>
   );

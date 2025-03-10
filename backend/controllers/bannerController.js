@@ -77,6 +77,13 @@ exports.updateBanner = async (req, res) => {
       }
     }
 
+    // default banner will always be active and have no dates
+    if (banner.isDefault) {
+      banner.status = "Active";
+      banner.startDate = undefined;
+      banner.endDate = undefined
+    }
+
     // Handle image uploads if provided
     if (req.files) {
       if (req.files.photoWeb) {
@@ -99,27 +106,44 @@ exports.updateBanner = async (req, res) => {
 // to delete
 exports.deleteBanner = async (req, res) => {
   try {
-    const { id } = req.params
+    const { id } = req.params;
 
-    const banner = await Banner.findById(req.params.id);
-    if (!banner) return res.status(404).send('Banner not found');
+    const banner = await Banner.findById(id);
+    if (!banner) return res.status(404).json({ message: "Banner not found" });
 
-    // Delete images if they exist
-    if (banner.photoWeb) {
-      const publicIdWeb = banner.photoWeb.split('/').pop().split('.')[0]; // Extract public ID
-      await cloudinary.uploader.destroy(`banners/${publicIdWeb}`);
+    // Check for last default banner
+    if (banner.isDefault) {
+      const defaultCount = await Banner.countDocuments({ isDefault: true });
+      if (defaultCount <= 1) {
+        return res.status(403).json({
+          message: "At least one default banner must remain"
+        });
+      }
     }
 
-    if (banner.photoApp) {
-      const publicIdApp = banner.photoApp.split('/').pop().split('.')[0]; // Extract public ID
-      await cloudinary.uploader.destroy(`banners/${publicIdApp}`);
-    }
+    // Cloudinary deletion helper
+    const deleteCloudinaryAsset = async (url) => {
+      if (!url) return;
+      const publicId = url.split('/upload/')[1]?.split('.')[0];
+      if (publicId) {
+        await cloudinary.uploader.destroy(publicId, { resource_type: 'image' });
+      }
+    };
 
-    await Banner.findByIdAndDelete(id)
+    // Parallel deletion
+    await Promise.all([
+      deleteCloudinaryAsset(banner.photoWeb),
+      deleteCloudinaryAsset(banner.photoApp)
+    ]);
 
-    return res.status(204).json({ message: "Banner deleted successfully" });
+    await Banner.findByIdAndDelete(id);
+    return res.status(200).json({ message: "Banner deleted successfully" });
+
   } catch (err) {
-    res.status(500).json({ message: "Error deleting banner", Error: err.message });
+    console.error("Delete error:", err);
+    return res.status(500).json({
+      message: "Deletion failed. Please try again later"
+    });
   }
 };
 
