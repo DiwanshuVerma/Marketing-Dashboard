@@ -42,6 +42,8 @@ exports.updateBanner = async (req, res) => {
     const banner = await Banner.findById(id);
     if (!banner) return res.status(404).send("Banner not found");
 
+    delete bodyFields.clicks // clicks can only be modified via clickCounts
+
     // Update only the fields that are present in the request body
     const fieldsToUpdate = {};
     Object.keys(bodyFields).forEach(key => {
@@ -133,7 +135,7 @@ exports.getActiveBanners = async (req, res) => {
 };
 
 
-// POST: add a new click entry with the current date
+// POST: add a new click entry with the current date when user click on a banner
 exports.clickCounts = async (req, res) => {
   try {
     const { _id } = req.params;
