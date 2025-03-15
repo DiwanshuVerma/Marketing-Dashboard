@@ -9,7 +9,7 @@ const campaigns = [
     name: "Banners",
     categories: [
       { name: "Default Banners" },
-      { name: "Discount Banners" }
+      { name: "Banners" }
     ]
   }
 ];

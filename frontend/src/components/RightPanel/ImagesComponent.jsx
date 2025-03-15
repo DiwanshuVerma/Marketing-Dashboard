@@ -1,17 +1,26 @@
-import React, { useState, useEffect } from "react";
+
+import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from 'react-router-dom'
-import { useOffers } from "../../context/OffersContext";
 import { CiCircleInfo } from "react-icons/ci";
-import { useResource } from "../../context/Banner_CollectionContext";
+import ReactCrop from 'react-image-crop';
+import 'react-image-crop/dist/ReactCrop.css'
+import { useOffers } from '../../context/OffersContext'
+import { useResource } from '../../context/Banner_CollectionContext'
 
 const ImagesComponent = ({ isEditMode, image, onImageChange, type, onChange }) => {
   const [previewImage, setPreviewImage] = useState(null);
-  const [isOfferSelected, setIsOfferSelected] = useState(false)
-  const { selectedResource } = useResource()
-  const [bannerOffer, setBannerOffer] = useState(selectedResource?.offer || "--Select--")
-  const navigate = useNavigate()
-  
-  const { offers } = useOffers()
+  const [isOfferSelected, setIsOfferSelected] = useState(false);
+  const { selectedResource, resourceType } = useResource();
+  const [bannerOffer, setBannerOffer] = useState(selectedResource?.offer || "--Select--");
+  const navigate = useNavigate();
+  const { offers } = useOffers();
+  const imageRef = useRef(null);
+  const [src, setSrc] = useState(null);
+  const [crop, setCrop] = useState({
+    unit: '%',
+    width: 100,
+    aspect: 3300 / 900 // Enforce aspect ratio instead of fixed size
+  });
 
 
   useEffect(() => {
@@ -41,13 +50,88 @@ const ImagesComponent = ({ isEditMode, image, onImageChange, type, onChange }) =
   const handleImageUpload = (e) => {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
-      setPreviewImage(URL.createObjectURL(file));
-      onImageChange(file);
+      const reader = new FileReader();
+
+      reader.onload = () => {
+        const img = new Image();
+        img.src = reader.result;
+
+        img.onload = () => {
+          // Validate image dimensions
+          // if (img.width < 3300 || img.height < 900) {
+          //   alert('Image must be at least 3300x900 pixels');
+          //   return;
+          // }
+
+          setSrc(reader.result);
+          setCrop({
+            unit: '%',
+            width: 50, // Initial crop size
+            aspect: 3300 / 900
+          });
+        };
+      };
+
+      reader.readAsDataURL(file);
     }
+  };
+
+  const getCroppedImg = () => {
+    const image = imageRef.current;
+    const canvas = document.createElement('canvas');
+    const scaleX = image.naturalWidth / image.width;
+    const scaleY = image.naturalHeight / image.height;
+
+    // Set canvas dimensions to final desired size
+    canvas.width = 3300;
+    canvas.height = 900;
+
+    const ctx = canvas.getContext('2d');
+
+    // Ensure pixel-perfect rendering
+    ctx.imageSmoothingEnabled = false;
+    ctx.imageSmoothingQuality = 'high';
+
+    // Calculate actual crop coordinates
+    const pixelCrop = {
+      x: crop.x * scaleX,
+      y: crop.y * scaleY,
+      width: crop.width * scaleX,
+      height: crop.height * scaleY,
+    };
+
+    // Draw image with exact dimensions
+    ctx.drawImage(
+      image,
+      pixelCrop.x,
+      pixelCrop.y,
+      pixelCrop.width,
+      pixelCrop.height,
+      0,
+      0,
+      canvas.width,
+      canvas.height
+    );
+
+    // Convert to blob and update state
+    canvas.toBlob(blob => {
+      if (!blob) return;
+
+      const file = new File([blob], 'cropped-image.jpg', {
+        type: 'image/jpeg',
+        lastModified: Date.now(),
+      });
+
+      const url = URL.createObjectURL(file);
+      setPreviewImage(url);
+      onImageChange(file);
+      setSrc(null);
+    }, 'image/jpeg');
   };
 
   const handleClearImage = () => {
     setPreviewImage(null);
+    setSrc(null);
     onImageChange(null);
   };
 
@@ -63,7 +147,7 @@ const ImagesComponent = ({ isEditMode, image, onImageChange, type, onChange }) =
     <div className="mb-6">
       <div className="items-center w-full flex justify-between mb-4">
 
-        <h3 className="text-lg text-gray-800 font-semibold mb-2 flex items-center gap-2">
+        <h3 className="font-semibold text-gray-800 text-sm mb-2 flex items-center gap-2">
           Image for {type}{" "}
           {type === "Web" ? (
             <div className="relative group font-normal">
@@ -78,31 +162,42 @@ const ImagesComponent = ({ isEditMode, image, onImageChange, type, onChange }) =
         </h3>
 
 
-        {type === 'Web' && (
-          <div className="flex items-center gap-3">
-            <div className="flex">
-              <label className={`mr-1  font-bold ${isOfferSelected ? 'text-green-600' : 'text-red-500'}`} htmlFor="offer">{isOfferSelected ? 'Offer:' : 'Select Offer'}</label>
-              <select className="p-1 rounded" value={bannerOffer} name="" id="offer" disabled={!isEditMode} onChange={HandleBannerOffer}>
-                <option value="" >--Select--</option>
-                {
-                  offers.map((offer, offerIndex) => (
-                    <option key={offerIndex} value={offer.name}>{offer.name}</option>
-                  ))
-                }
-              </select>
-            </div>
-            <div>
-              <button className="bg-green-600 rounded p-1 text-white" disabled={!isEditMode} onClick={() => navigate('/RestaurantOffers')}>Create new</button>
-            </div>
-          </div>
-        )}
+        {resourceType === 'banners' && type === 'Web' && ( // Only show offers for Banners (Web)
+  <div className="flex items-center gap-3">
+    <div className="flex">
+      <label className={`mr-1  font-bold ${isOfferSelected ? 'text-green-600' : 'text-red-500'}`} htmlFor="offer">
+        {isOfferSelected ? 'Offer:' : 'Select Offer'}
+      </label>
+      <select
+        className="p-1 rounded"
+        value={bannerOffer}
+        name=""
+        id="offer"
+        disabled={!isEditMode}
+        onChange={HandleBannerOffer}
+      >
+        <option value="">--Select--</option>
+        {offers.map((offer, offerIndex) => (
+          <option key={offerIndex} value={offer.name}>{offer.name}</option>
+        ))}
+      </select>
+    </div>
+    <div>
+      <button
+        className="bg-green-600 rounded p-1 text-white"
+        disabled={!isEditMode}
+        onClick={() => navigate('/RestaurantOffers')}
+      >
+        Create new
+      </button>
+    </div>
+  </div>
+)}
 
 
       </div>
-      <div
-        className={`h-auto border rounded-md flex flex-col items-center justify-center p-4 ${type === "Web" ? "w-full" : "w-1/2"
-          }`}
-      >
+
+      <div className={`h-auto border rounded-md flex flex-col items-center justify-center p-4 ${type === "Web" ? "w-full" : "w-1/2"}`}>
         {isEditMode ? (
           <>
             {previewImage ? (
@@ -119,11 +214,45 @@ const ImagesComponent = ({ isEditMode, image, onImageChange, type, onChange }) =
                   Remove
                 </button>
               </div>
+            ) : src ? (
+              <div className="w-full">
+                <ReactCrop
+                  crop={crop}
+                  onChange={c => setCrop(c)}
+                  aspect={3300 / 900}
+                  ruleOfThirds
+                  minWidth={3300}
+                  minHeight={900}
+                >
+                  <img
+                    ref={imageRef}
+                    src={src}
+                    alt="Upload"
+                    style={{ maxWidth: '100%' }}
+                    onLoad={e => {
+                      // Reset crop when new image loads
+                      setCrop({
+                        unit: 'px',
+                        width: 3300,
+                        height: 900,
+                        x: 0,
+                        y: 0,
+                      });
+                    }}
+                  />
+                </ReactCrop>
+                <button
+                  onClick={getCroppedImg}
+                  className="mt-4 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
+                >
+                  Crop Image
+                </button>
+              </div>
             ) : (
               <>
                 <p className="text-sm text-gray-500 mb-2">
                   {type === "Web"
-                    ? "Upload a banner image (1100x300 resolution recommended)"
+                    ? "Upload a banner image (3300x900 resolution required)"
                     : "334x76 resolution recommended"}
                 </p>
                 <input
@@ -145,11 +274,11 @@ const ImagesComponent = ({ isEditMode, image, onImageChange, type, onChange }) =
         ) : previewImage ? (
           <img src={previewImage} alt="Banner" className="max-w-full h-auto" />
         ) : (
-          <p className="text-gray-500">No banner image available</p>
+          <p className="text-gray-500 text-sm">No banner image available</p>
         )}
       </div>
+
     </div>
   );
 };
-
 export default ImagesComponent;

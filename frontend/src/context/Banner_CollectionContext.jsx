@@ -8,13 +8,14 @@ export const ResourceProvider = ({ children, resourceType }) => {
   const [selectedResource, setSelectedResource] = useState('')
 
   // generic API path based on resourceType (e.g., "banners" or "collections")
-  // const API_PATH = `https://marketing-dashboard-2wfk.onrender.com/${resourceType}`;
   const API_PATH = `https://marketing-dashboard-2wfk.onrender.com/${resourceType}`;
 
   const refetchResources = () => {
     axios.get(API_PATH)
       .then(response => setResources(response.data))
       .catch(console.error);
+
+      console.log(selectedResource)
   };
 
   useEffect(() => {
@@ -79,6 +80,7 @@ export const ResourceProvider = ({ children, resourceType }) => {
 
   return (
     <ResourceContext.Provider value={{
+      resourceType,
       resources,
       selectedResource,
       setSelectedResource,

@@ -17,17 +17,20 @@ const RightPanel = () => {
   const [data, setData] = useState(selectedResource || {});
   const [selectedPages, setSelectedPages] = useState(selectedResource?.pages || []);
   const [selectedCities, setSelectedCities] = useState(selectedResource?.cities || []);
-  
+
   const [selectedRestaurants, setSelectedRestaurants] = useState(selectedResource?.restaurants || []);
   useEffect(() => {
 
     if (selectedResource) {
       setData({ ...selectedResource });
- 
+
       setSelectedPages(selectedResource.pages || [])
       setSelectedRestaurants(selectedResource?.restaurants || [])
       setSelectedCities(selectedResource.cities || []);
     }
+
+    console.log(selectedRestaurants)
+
   }, [selectedResource]);
 
   const handleFieldChange = (field, value) => {
@@ -128,7 +131,7 @@ const RightPanel = () => {
         onChange={handleFieldChange}
       />
 
-      {selectedResource.pages && (
+      {selectedResource.pages ? (
 
         <div className="flex justify-between mr-36 max-h-72 overflow-hidden">
           {/* Pages Selection */}
@@ -144,6 +147,14 @@ const RightPanel = () => {
               onChange={setSelectedCities}
             />
           </div>
+        </div>
+      ) : (
+        <div className="overflow-auto">
+          <CampaignCities
+            isEditMode={isEditMode}
+            selectedCities={selectedCities}
+            onChange={setSelectedCities}
+          />
         </div>
       )}
 

@@ -120,7 +120,7 @@ const LeftPanel = ({campaigns}) => {
   return (
     <div className="w-2/5 bg-gray-50 border-r border-gray-200 p-4 flex flex-col justify-between overflow-y-auto custom-scrollbar">
       <div>
-        <h2 className="text-xl font-semibold mb-4 text-gray-700">Campaigns</h2>
+        <h2 className="text-xl font-semibold mb-4 text-gray-700">{campaigns[0].name}</h2>
         {campaigns.map((campaign) => (
           <div key={campaign.name} className="mb-4" >
             <div

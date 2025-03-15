@@ -38,7 +38,6 @@ exports.updateCollection = async (req, res) => {
     const { id } = req.params;
     const { startDate, endDate, ...bodyFields } = req.body;
 
-
     // find the collection document
     const collection = await Collection.findById(id);
     if (!collection) return res.status(404).send("Collection not found");

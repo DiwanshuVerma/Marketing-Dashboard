@@ -55,11 +55,11 @@ const HeaderComponent = ({
           onChange={handleTitleChange}
           onKeyDown={handleKeyDown}
           placeholder="Title..."
-          className="text-2xl font-semibold text-gray-800 bg-gray-50 border border-gray-300 rounded px-2 py-1 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-transparent w-full mr-4"
+          className="text-lg font-semibold text-gray-800 bg-gray-50 border border-gray-300 rounded px-2 py-1 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-transparent w-full mr-4"
           autoFocus
         />
       ) : (
-        <input value={data.title} placeholder="Untitled" readOnly className="outline-none text-2xl font-semibold text-gray-800" />
+        <input value={data.title} placeholder="Untitled" readOnly className="outline-none text-lg font-semibold text-gray-800" />
       )}
 
       <div className="flex gap-4">

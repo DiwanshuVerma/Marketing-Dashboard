@@ -1,0 +1,123 @@
+.filterWindow {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    z-index: 99;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #0000006b;
+  }
+  
+  .filterBoxWrapper {
+    background-color: white;
+    width: 56%;
+    min-width: 500px;
+    height: 490px;
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+  }
+  
+  .header {
+    height: 60px;
+    border-bottom: 1px solid rgb(232, 232, 232);
+    border-top-left-radius: inherit;
+    border-top-right-radius: inherit;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 16px;
+  }
+  
+  .header h2 {
+    font-weight: 500;
+  }
+  
+  .closeBtn {
+    font-size: 24px;
+    float: right;
+    cursor: pointer;
+  }
+  .container {
+    display: flex;
+    height: 86%;
+  }
+  .sidebar {
+    flex: 0.3;
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+    height: auto;
+    display: flex;
+    flex-direction: column;
+    border-right: 2px solid #ef4f61;
+    background-color: #f8f8f8;
+    box-sizing: border-box;
+  }
+  .tab {
+    padding: 18px;
+  }
+  .active {
+    border-left: 4px solid #ef4f61;
+    background-color: white;
+  }
+  .option {
+    text-decoration: none;
+    color: black;
+    cursor: pointer;
+  }
+  
+  .main {
+    flex: 0.7;
+    display: flex;
+    padding-left: 16px;
+    overflow-y: auto;
+  }
+  .sortChose,
+  .cuisineChose {
+    display: flex;
+    align-items: baseline;
+    margin-bottom: 2px;
+  }
+  
+  .sortChose input[type="radio"] {
+    accent-color: #ef4f61;
+  }
+  
+  .cuisineChose input:checked {
+    background-color: #ef4f61;
+  }
+  .radioOptions {
+    display: block;
+    width: 100%;
+  }
+  .checkBoxOptions {
+    display: block;
+    width: 100%;
+    overflow-y: scroll;
+  }
+  .checkBoxOptions label,
+  .radioOptions label {
+    font-weight: 600;
+    padding: 4px;
+    font-size: 17px;
+  }
+  
+  .radioOptions,
+  .checkBoxOptions p {
+    font-weight: 600;
+  }
+  
+  @media (max-width: 576px) {
+    .filterBoxWrapper {
+      min-width: 100%;
+    }
+    .tab {
+      padding: 8px;
+    }
+  }
+  

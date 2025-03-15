@@ -44,7 +44,7 @@ const Dates = ({ isEditMode, details, onChange }) => {
       <div className="grid grid-cols-2 gap-16">
         {/* Start Date */}
         <div >
-          <label className="block font-semibold text-gray-800">Start Date</label>
+          <label className="block text-sm font-semibold text-gray-800">Start Date</label>
           <input
             type="datetime-local"
             value={startDate}
@@ -56,7 +56,7 @@ const Dates = ({ isEditMode, details, onChange }) => {
 
         {/* End Date */}
         <div>
-          <label className="block font-semibold text-gray-800">End Date</label>
+          <label className="block text-sm font-semibold text-gray-800">End Date</label>
           <input
             type="datetime-local"
             value={endDate}

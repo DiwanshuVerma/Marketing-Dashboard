@@ -1,6 +1,9 @@
-import { useEffect, useRef, useState } from "react";
-import { clientSideRestaurants } from '../../data/restaurants'
+
+import { useState, useEffect, useRef } from 'react';
+import { clientSideRestaurants } from '../../data/restaurants';
 import { FaStar } from "react-icons/fa";
+import FilterPopupWindow from './FilterPopupWindow/FilterPopupWindow';
+import FilterBox from './FilterBox/FilterBox';
 
 const CollectionType = ({ isEditMode, selectedResource, onChange, selectedRestaurants }) => {
 
@@ -18,9 +21,12 @@ const CollectionType = ({ isEditMode, selectedResource, onChange, selectedRestau
     const [ratingDropdownOpen, setRatingDropdownOpen] = useState(false);
     const [locationsDropdownOpen, setLocationsDropdownOpen] = useState(false)
 
+    const [filterGroup, setFilterGroup] = useState([[], []]);
+    const [isOpen, setIsOpen] = useState(false)
     const isInternalChange = useRef(false);
 
     useEffect(() => {
+        
         if (selectedTypes.length === 0 && selectedRatings.length === 0 && !searchQuery) {
             setFilteredRestaurants([]);
             return;
@@ -100,6 +106,29 @@ const CollectionType = ({ isEditMode, selectedResource, onChange, selectedRestau
         const value = e.target.value;
         setFilteredRestaurants(value)
     }
+    // const FILTER_OPTIONS = {
+    //     cuisines: [...],
+    //     sorts: [...],
+    //     dietary: [...]
+    //   };
+
+    const handlePopupWindowFilter = (evt) => {
+        if (evt.target.type === "radio") {
+            // Handle radio filters (single selection)
+            setFilterGroup(([_, arr2]) => [
+                [evt.target.value], // Store radio filter in first array
+                arr2
+            ]);
+        } else {
+            // Handle checkbox filters (multiple selections)
+            setFilterGroup(([arr1, arr2]) => {
+                if (evt.target.checked) {
+                    return [arr1, [...arr2, evt.target.value]];
+                }
+                return [arr1, arr2.filter(v => v !== evt.target.value)];
+            });
+        }
+    };
 
     const startIndex = (currentPage - 1) * restaurantsPerPage;
     const endIndex = startIndex + restaurantsPerPage;
@@ -108,12 +137,11 @@ const CollectionType = ({ isEditMode, selectedResource, onChange, selectedRestau
 
     return (
         <div className="my-8">
-            <h3 className="text-lg text-gray-800 font-semibold mb-2">Restaurants</h3>
+            <h3 className="text-sm text-gray-800 font-semibold mb-2">Restaurants</h3>
 
             {/* --------------> filters <--------------- */}
             <div className="mb-4 relative flex items-center gap-2">
 
-                {/* --------------> types <--------------- */}
                 <div className="relative z-10 w-40">
                     <button
                         onClick={() => setDropdownOpen(!dropdownOpen)}
@@ -149,68 +177,19 @@ const CollectionType = ({ isEditMode, selectedResource, onChange, selectedRestau
                     />
                 </div>
 
-                {/* ----------> ratings <--------- */}
-                {filteredRestaurants.length > 0 ? <div className="relative z-10">
-                    <button
-                        onClick={() => setRatingDropdownOpen(!ratingDropdownOpen)}
-                        className="p-1 border rounded w-20 text-center bg-white flex items-center justify-center gap-2"
-                    >
-                        {selectedRatings.length > 0 ? (
-                            <>
-                                <FaStar size={16} color="gray" />
-                                {selectedRatings.join(", ")}
-                            </>
-                        ) : (
-                            <>
-                                <FaStar size={16} color="gray" />
-                                <span>All</span>
-                            </>
-                        )}
-                    </button>
+                <FilterBox
+                    text="Filter"
+                    setIsOpen={setIsOpen}
+                    filterGroup={filterGroup}
+                    handlePopupWindowFilter={handlePopupWindowFilter}
+                />
 
-                    {ratingDropdownOpen && (
-                        <div className="absolute left-0 mt-1 bg-white border rounded w-full shadow-md p-2 max-h-48 overflow-y-auto">
-                            {["1", "2", "3", "4", "5"].map((rating) => (
-                                <label key={rating} className="flex items-center p-1">
-                                    <input
-                                        type="checkbox"
-                                        checked={selectedRatings.includes(rating)}
-                                        onChange={() => handleRatingChange(rating)}
-                                        className="mr-2"
-                                    />
-                                    <FaStar size={16} color="gray" />
-                                    <span>{rating}</span>
-                                </label>
-                            ))}
-                        </div>
-                    )}
-                </div> : ''}
-
-                {/* --------------> locations <--------------- */}
-
-                {filteredRestaurants.length > 0 ? <div className="relative z-10 w-40">
-                    <button
-                        onClick={() => setLocationsDropdownOpen(!locationsDropdownOpen)}
-                        className="p-1 border rounded w-full text-center bg-white"
-                    >
-                        {selectedLocations.length > 0 ? `Locations (${selectedLocations.length})` : "Location"}
-                    </button>
-                    {locationsDropdownOpen && (
-                        <div className="absolute left-0 mt-1 bg-white border w-full rounded shadow-md p-1 max-h-48 overflow-y-auto">
-                            {["New York", "Toronto", "New Delhi", "New Rajsth"].map(location => (
-                                <label key={location} className="flex items-center p-1">
-                                    <input
-                                        type="checkbox"
-                                        checked={selectedLocations.includes(location)}
-                                        onChange={() => handleLocationChange(location)}
-                                        className="mr-2"
-                                    />
-                                    {location}
-                                </label>
-                            ))}
-                        </div>
-                    )}
-                </div> : ''}
+                <FilterPopupWindow
+                    isOpen={isOpen}
+                    setIsOpen={setIsOpen}
+                    handlePopupWindowFilter={handlePopupWindowFilter}
+                    initialFilters={filterGroup}
+                />
             </div>
 
 
@@ -230,12 +209,6 @@ const CollectionType = ({ isEditMode, selectedResource, onChange, selectedRestau
                                     </div>
                                     <div className="flex gap-4 ml-5 text-xs text-gray-600">
                                         <span className='w-1/5'>Cuisine: {restaurant.cuisine}</span>
-                                        <span className={
-                                            restaurant.type === "Offer Based" ? "text-green-600" :
-                                                restaurant.type === "Live Event" ? "text-purple-600" : "text-blue-600"
-                                        }>
-                                            {restaurant.type}
-                                        </span>
                                     </div>
                                 </div>
                                 <div>
@@ -295,6 +268,4 @@ const CollectionType = ({ isEditMode, selectedResource, onChange, selectedRestau
     );
 };
 
-
-
-export default CollectionType
+export default CollectionType;

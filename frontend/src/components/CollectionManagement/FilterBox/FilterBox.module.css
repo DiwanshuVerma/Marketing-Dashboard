@@ -1,0 +1,100 @@
+.outerDiv {
+    width: max-content;
+    height: 25px;
+    margin: 5px;
+    padding: 16px 8px;
+    border-radius: 7px;
+    border: 1px solid rgb(207, 207, 207);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: rgb(130, 130, 130);
+    font-size: 1rem;
+    cursor: pointer;
+    position: relative;
+  }
+  
+  .outerDiv:hover {
+    background-color: rgba(240, 236, 236, 0.8);
+  }
+  
+  .leftIconBox,
+  .rightIconBox {
+    width: 15px;
+    height: 15px;
+  }
+  
+  .leftIcon,
+  .rightIcon {
+    width: 100%;
+    height: 100%;
+  }
+  
+  .text {
+    margin: 0 5px;
+  }
+  .filterCount {
+    background-color: rgb(239, 78, 94);
+    color: rgb(255, 255, 255);
+    border-radius: 6px;
+    font-weight: 600;
+    padding: 1px 5px;
+  }
+  .filterEffect {
+    background-color: rgb(239, 78, 94) !important;
+    color: rgb(255, 255, 255) !important;
+  }
+  
+  .dropdown {
+    position: relative;
+    width: auto;
+  }
+  
+  .toggleButton {
+    padding: 10px 15px;
+    border: none;
+    background-color: #007bff;
+    color: white;
+    cursor: pointer;
+    border-radius: 5px;
+  }
+  
+  .toggleButton:hover {
+    background-color: #0056b3;
+  }
+  
+  .optionsContainer {
+    position: absolute;
+    top: 100;
+    left: 0;
+    background-color: white;
+    border: 1px solid #ccc;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 5px;
+    margin-top: 5px;
+    z-index: 50;
+  
+    display: flex !important;
+    flex-direction: column !important;
+    padding: 8px 32px 8px 8px;
+  }
+  
+  .option {
+    display: flex;
+    align-items: center;
+    margin-bottom: 8px;
+    cursor: pointer;
+  }
+  
+  .option:last-child {
+    margin-bottom: 0;
+  }
+  
+  .option input {
+    margin-right: 10px;
+  }
+  
+  .option input:checked {
+    background-color: #ef4f61;
+  }
+  

@@ -20,7 +20,7 @@ const CampaignCities = ({ isEditMode, selectedCities, onChange }) => {
 
   return (
     <div className="mt-8 mb-6 overflow-y-auto">
-      <h3 className="text-lg font-semibold mb-2">Select Cities</h3>
+      <h3 className="text-sm font-semibold mb-2">Select Cities</h3>
       <div className="flex flex-wrap gap-4 flex-col">
         {availableCities.map((city) => (
           <label key={city} className="flex items-center space-x-2">

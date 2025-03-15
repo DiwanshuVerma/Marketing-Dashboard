@@ -9,7 +9,7 @@ const campaigns = [
       name: "Collections",
       categories: [
         { name: "Default Collections" },
-        { name: "Discount Collections" }
+        { name: "Collections" }
       ]
     }
   ];

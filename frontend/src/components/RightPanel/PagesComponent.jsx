@@ -22,7 +22,7 @@ const PagesComponent = ({ isEditMode, selectedPages, onChange }) => {
 
   return (
     <div className="mt-8 mb-6">
-      <h3 className="text-lg font-semibold mb-2">Select Pages</h3>
+      <h3 className="text-sm font-semibold mb-2">Select Pages</h3>
       <div className="flex flex-wrap gap-4 flex-col">
         {availablePages.map((page) => (
           <label key={page} className="flex items-center space-x-2">
