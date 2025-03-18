@@ -9,7 +9,7 @@ export const OffersProvider = ({ children }) => {
     
     const refetchOffers = () => {
         try {
-            axios.get('https://marketing-dashboard-2wfk.onrender.com/offers')
+            axios.get(`${import.meta.env.VITE_API_PATH}/offers`)
                 .then(response => {
                     setOffers(response.data);
                 })
@@ -28,7 +28,7 @@ export const OffersProvider = ({ children }) => {
     // Handlers
     const handleAddOffer = async (newOffer) => {
         try {
-            const response = await fetch('https://marketing-dashboard-2wfk.onrender.com/offers', {
+            const response = await fetch(`${import.meta.env.VITE_API_PATH}/offers`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -50,7 +50,7 @@ export const OffersProvider = ({ children }) => {
 
     const handleRemoveOffer = async (offerId) => {
         try {
-            await fetch(`https://marketing-dashboard-2wfk.onrender.com/offers/${offerId}`, {
+            await fetch(`${import.meta.env.VITE_API_PATH}/offers/${offerId}`, {
                 method: 'DELETE',
             })
             refetchOffers()
@@ -62,7 +62,7 @@ export const OffersProvider = ({ children }) => {
 
     const handleEditOffer = async (offerId, updatedFields) => {
         try {
-            const res = await fetch(`https://marketing-dashboard-2wfk.onrender.com/offers/${offerId}`, {
+            const res = await fetch(`${import.meta.env.VITE_API_PATH}/offers/${offerId}`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(updatedFields),

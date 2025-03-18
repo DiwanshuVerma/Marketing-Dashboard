@@ -10,6 +10,9 @@ import { OffersProvider } from "../context/OffersContext";
 import { useResource } from "../context/Banner_CollectionContext"
 import CollectionType from "./CollectionManagement/CollectionType";
 
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
 const RightPanel = () => {
   const { selectedResource, handleUpdate, handleDelete } = useResource()
 
@@ -28,9 +31,6 @@ const RightPanel = () => {
       setSelectedRestaurants(selectedResource?.restaurants || [])
       setSelectedCities(selectedResource.cities || []);
     }
-
-    console.log(selectedRestaurants)
-
   }, [selectedResource]);
 
   const handleFieldChange = (field, value) => {
@@ -83,6 +83,7 @@ const RightPanel = () => {
   return (
     <div className="w-3/5 p-6 bg-white shadow-md border-l border-gray-200 overflow-y-auto">
       {/* Header */}
+      <ToastContainer />
       <HeaderComponent
         data={data}
         isEditMode={isEditMode}
@@ -133,14 +134,17 @@ const RightPanel = () => {
 
       {selectedResource.pages ? (
 
-        <div className="flex justify-between mr-36 max-h-72 overflow-hidden">
+        <div className="flex relative justify-between mb-6">
           {/* Pages Selection */}
-          <PagesComponent
-            isEditMode={isEditMode}
-            selectedPages={selectedPages}
-            onChange={setSelectedPages}
-          />
-          <div className="overflow-auto">
+          <div className="">
+            <PagesComponent
+              isEditMode={isEditMode}
+              selectedPages={selectedPages}
+              onChange={setSelectedPages}
+            />
+          </div>
+
+          <div className="">
             <CampaignCities
               isEditMode={isEditMode}
               selectedCities={selectedCities}
@@ -149,7 +153,7 @@ const RightPanel = () => {
           </div>
         </div>
       ) : (
-        <div className="overflow-auto">
+        <div className="w-fit">
           <CampaignCities
             isEditMode={isEditMode}
             selectedCities={selectedCities}

@@ -20,7 +20,7 @@ const LeftPanel = ({ setSelectedTemplate, setHandleTemplate, templates }) => {
   
   const downloadTemplatesAsExcel = async () => {
     try {
-      const response = await fetch('https://marketing-dashboard-2wfk.onrender.com/templates/templates-grouped');
+      const response = await fetch(`${import.meta.env.VITE_API_PATH}/templates/templates-grouped`);
       const groupedTemplates = await response.json();
   
       const workbook = XLSX.utils.book_new();

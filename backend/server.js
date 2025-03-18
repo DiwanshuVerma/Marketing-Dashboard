@@ -5,12 +5,12 @@ const cron = require("node-cron");
 const Offer = require('./models/Offers');
 const Banner = require('./models/Banner');
 const Collection = require('./models/Collection');
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 3000;
 
 connectDB();
-// ping the server in evry 5min to prevent from going sleep
-const url = `https://marketing-dashboard-2wfk.onrender.com`;
-const interval = 300000; // 5mins
+// ping the server in evry 10min to prevent from going sleep
+const url = `https://marketing-dashboard-8274.onrender.com`;
+const interval = 600000; // 5mins
 
 async function reloadWebsite() {
   try {

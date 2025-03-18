@@ -1,7 +1,5 @@
-
 import { useState, useEffect, useRef } from 'react';
-import { clientSideRestaurants } from '../../data/restaurants';
-import { FaStar } from "react-icons/fa";
+import { clientSideRestaurants } from '../../data/restaurants'
 import FilterPopupWindow from './FilterPopupWindow/FilterPopupWindow';
 import FilterBox from './FilterBox/FilterBox';
 
@@ -13,21 +11,16 @@ const CollectionType = ({ isEditMode, selectedResource, onChange, selectedRestau
     const [restaurantsPerPage, setRestaurantsPerPage] = useState(10);
 
     const [selectedTypes, setSelectedTypes] = useState([]);
-    const [searchQuery, setSearchQuery] = useState("");
-    const [selectedRatings, setSelectedRatings] = useState([]);
-    const [selectedLocations, setSelectedLocations] = useState([])
+    const [searchQuery, setSearchQuery] = useState("")
 
-    const [dropdownOpen, setDropdownOpen] = useState(false);
-    const [ratingDropdownOpen, setRatingDropdownOpen] = useState(false);
-    const [locationsDropdownOpen, setLocationsDropdownOpen] = useState(false)
+    const [dropdownOpen, setDropdownOpen] = useState(false)
 
     const [filterGroup, setFilterGroup] = useState([[], []]);
     const [isOpen, setIsOpen] = useState(false)
     const isInternalChange = useRef(false);
 
     useEffect(() => {
-        
-        if (selectedTypes.length === 0 && selectedRatings.length === 0 && !searchQuery) {
+        if (selectedTypes.length === 0 && !searchQuery) {
             setFilteredRestaurants([]);
             return;
         }
@@ -38,26 +31,18 @@ const CollectionType = ({ isEditMode, selectedResource, onChange, selectedRestau
             filtered = filtered.filter(restaurant => selectedTypes.includes(restaurant.type));
         }
 
-        // if (selectedRatings.length > 0) {
-        //     filtered = filtered.filter(restaurant => selectedRatings.includes(restaurant.rating.toString()));
-        // }
-
         if (searchQuery) {
             filtered = filtered.filter(restaurant => restaurant.name.toLowerCase().includes(searchQuery.toLowerCase()));
         }
 
-        // if (selectedLocations.length > 0) {
-        //     filtered = filtered.filter(restaurant => selectedLocations.includes(restaurant.location));
-        // }
-
         setFilteredRestaurants(filtered);
         setNewRestaurants(filtered.map(r => r._id));
         isInternalChange.current = true;
-    }, [selectedTypes, selectedRatings, searchQuery, selectedLocations]);
+    }, [selectedTypes, searchQuery]);
 
     useEffect(() => {
         setCurrentPage(1);
-    }, [selectedTypes, selectedRatings, searchQuery, restaurantsPerPage]);
+    }, [selectedTypes, searchQuery, restaurantsPerPage]);
 
     useEffect(() => {
         onChange(newRestaurants);
@@ -68,18 +53,6 @@ const CollectionType = ({ isEditMode, selectedResource, onChange, selectedRestau
             prev.includes(type) ? prev.filter(t => t !== type) : [...prev, type]
         );
     };
-
-    const handleRatingChange = (rating) => {
-        setSelectedRatings(prev =>
-            prev.includes(rating) ? prev.filter(r => r !== rating) : [...prev, rating]
-        );
-    };
-
-    const handleLocationChange = (location) => {
-        setSelectedLocations(prev =>
-            prev.includes(location) ? prev.filter(l => l !== location) : [...prev, location]
-        )
-    }
 
     const handleCheckboxChange = (restaurantId) => {
         setNewRestaurants(prev => {
@@ -100,17 +73,6 @@ const CollectionType = ({ isEditMode, selectedResource, onChange, selectedRestau
             }
         });
     };
-
-    // filter restaurants from search
-    const handleSearch = (e) => {
-        const value = e.target.value;
-        setFilteredRestaurants(value)
-    }
-    // const FILTER_OPTIONS = {
-    //     cuisines: [...],
-    //     sorts: [...],
-    //     dietary: [...]
-    //   };
 
     const handlePopupWindowFilter = (evt) => {
         if (evt.target.type === "radio") {
@@ -165,7 +127,7 @@ const CollectionType = ({ isEditMode, selectedResource, onChange, selectedRestau
                         </div>
                     )}
                 </div>
-
+                
                 {/* --------------> search <--------------- */}
                 <div className="">
                     <input
