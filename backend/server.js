@@ -6,11 +6,12 @@ const Offer = require('./models/Offers');
 const Banner = require('./models/Banner');
 const Collection = require('./models/Collection');
 const PORT = process.env.PORT || 3000;
+const renderURL = process.env.renderURL
 
 connectDB();
 // ping the server in evry 10min to prevent from going sleep
-const url = `https://marketing-dashboard-8274.onrender.com`;
-const interval = 600000; // 5mins
+const url = renderURL
+const interval = 600000; // 10mins
 
 async function reloadWebsite() {
   try {
