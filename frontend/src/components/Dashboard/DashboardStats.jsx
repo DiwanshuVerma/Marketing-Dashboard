@@ -1,3 +1,4 @@
+import { useNavigate } from "react-router-dom";
 import { useResource } from "../../context/Banner_CollectionContext";
 import {useOffers} from "../../context/OffersContext"
 
@@ -8,16 +9,19 @@ const stats = [
     label: "Banners (All)",
     value: 78,
     bg: "bg-pink-600",
+    path: "/campaign-management"
   },
   {
     label: "Banner clicks",
     value: 123,
     bg: "bg-blue-600",
+    path: "/campaign-management"
   },
   {
     label: "Restaurant Offers",
     value: 11,
     bg: "bg-green-600",
+    path: "/RestaurantOffers"
   },
 ];
 
@@ -25,7 +29,8 @@ const stats = [
 const DashboardStats = () => {
   const { resources } = useResource()
   const { offers } = useOffers()
-
+  const navigate = useNavigate();
+  
   console.log(resources.length)
 
   const filteredValue = (label) => {
@@ -63,6 +68,7 @@ const DashboardStats = () => {
               stroke="currentColor"
               strokeWidth={2}
               viewBox="0 0 24 24"
+              onClick={() =>  navigate(stat.path)}
             >
               <path
                 strokeLinecap="round"

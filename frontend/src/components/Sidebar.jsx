@@ -7,8 +7,8 @@ import {
   HiOutlineQuestionMarkCircle,
 } from "react-icons/hi";
 import { MdCampaign, MdHotelClass } from "react-icons/md";
-import { IoShareSocial } from "react-icons/io5";
-import { FaBookOpen } from "react-icons/fa";
+import { IoShareSocial, IoClose } from "react-icons/io5";
+import { FaBookOpen , FaHamburger} from "react-icons/fa";
 
 
 import { outletData } from "../data/dummy"; // Update the path as necessary  // Import dummy data
@@ -83,12 +83,12 @@ export default function Sidebar() {
       {/* Top bar with brand + toggle, using bg-red-600 */}
       <div className={topBarClasses}>
         <div className="flex items-center justify-between w-full">
-          <div className="font-bold text-2xl">{expanded ? "zomato" : "z"}</div>
+          <div className="font-bold text-2xl">{expanded ? "Pometo" : "P"}</div>
           <button
             onClick={() => setExpanded(!expanded)}
             className="text-white focus:outline-none ml-2"
           >
-            {expanded ? "<" : ">"}
+            {expanded ? <IoClose size={25}/> : <FaHamburger />}
           </button>
         </div>
         <div className={restaurantDashClasses}>
