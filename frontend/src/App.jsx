@@ -1,7 +1,7 @@
 // ------------------------
 // src/App.jsx
 // ------------------------
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Routes, Route } from "react-router-dom";
 import DashboardLayout from "./layouts/DashboardLayout";
 import DashboardHome from "./pages/DashboardHome";
@@ -15,9 +15,24 @@ import EmailTempalateEdit from "./components/EmailTempalateEdit";
 import { OffersProvider } from "./context/OffersContext";
 import { ResourceProvider } from "./context/Banner_CollectionContext";
 import CollectionManagement from "./pages/CollectionManagement";
+import { px } from "framer-motion";
 
 export default function App() {
+  const [isDesktop, setIsDesktop] = useState(window.innerWidth >= 1024);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsDesktop(window.innerWidth >= 1024);
+    };
+
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+
   return (
+    <>
+
     <Routes>
       <Route element={<DashboardLayout />}>
         <Route path="/" element={<DashboardHome />} />
@@ -48,5 +63,43 @@ export default function App() {
         <Route path="/help" element={<Help />} />
       </Route>
     </Routes>
+
+    {!isDesktop && (
+        <div style={styles.backdrop}>
+          <div style={styles.modal}>
+            <h2>Unsupported Screen Size</h2>
+            <p>Please access this site on a desktop or laptop for the best experience.</p>
+          </div>
+        </div>
+      )}
+    </>
   );
 }
+
+
+const styles = {
+  backdrop: {
+    position: "fixed",
+    top: 0,
+    left: 0,
+    width: "100vw",
+    height: "100vh",
+    backgroundColor: "rgba(0, 0, 0, 0.4)",
+    zIndex: 9999,
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    pointerEvents: "auto", // enable blocking interaction
+  },
+  modal: {
+    width: "80%",
+    maxWidth: "500px",
+    backgroundColor: "#fff",
+    padding: "1rem",
+    borderRadius: "12px",
+    textAlign: "center",
+    backdrop: "40px",
+
+    boxShadow: "0 8px 16px rgba(0,0,0,0.25)",
+  },
+};
