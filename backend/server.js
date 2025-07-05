@@ -9,20 +9,6 @@ const PORT = process.env.PORT || 3000;
 const renderURL = process.env.renderURL
 
 connectDB();
-// ping the server in evry 10min to prevent from going sleep
-const url = renderURL
-const interval = 600000; // 10mins
-
-async function reloadWebsite() {
-  try {
-    const response = await fetch(url);
-    console.log(`Reloaded at ${new Date().toISOString()}: Status Code ${response.status}`);
-  } catch (error) {
-    console.error(`Error reloading at ${new Date().toISOString()}:`, error.message);
-  }
-}
-
-setInterval(reloadWebsite, interval);
 
 // Function to update offer statuses
 const updateOfferStatuses = async () => {
